@@ -1,28 +1,16 @@
-// app/api/search/route.ts
-import { connectToDB } from '@/lib/models/database';
-import { Product } from '@/lib/models/product';
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server"
+import Product from "@/models/Product"
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get('q');
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const query = searchParams.get("q")
 
-  try {
-    await connectToDB();
-    
-    const products = await Product.find({
-      $or: [
-        { name: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } },
-        { category: { $regex: query, $options: 'i' } },
-      ],
-    }).limit(10);
+  if (!query) return NextResponse.json([])
 
-    return NextResponse.json(products);
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to search products' },
-      { status: 500 }
-    );
-  }
+  const results = await Product.find(
+    { $text: { $search: query } },
+    { score: { $meta: "textScore" } }
+  ).sort({ score: { $meta: "textScore" } })
+
+  return NextResponse.json(results)
 }

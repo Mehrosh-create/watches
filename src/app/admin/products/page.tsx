@@ -1,24 +1,31 @@
-// app/admin/products/page.tsx
-import { connectToDB } from '@/lib/models/database';
-import { Product } from '@/lib/models/product';
-import AdminProductsTable from '@/components/admin/ProductTable';
+// app/admin/products/page.tsx (client component)
+'use client'
 
-export default async function AdminProductsPage() {
-  await connectToDB();
-  const products = await Product.find({});
+import { useState } from 'react'
+import { DeleteProductButton } from '@/components/admin/DeleteProductButton'
+
+export default function AdminProductsPage() {
+  const [products, setProducts] = useState<Product[]>(initialProducts)
+
+  const handleDeleteSuccess = (deletedId: string) => {
+    setProducts(products.filter(p => p.id !== deletedId))
+  }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Manage Products</h1>
-        <a
-          href="/admin/products/new"
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-        >
-          Add Product
-        </a>
-      </div>
-      <AdminProductsTable products={JSON.parse(JSON.stringify(products))} />
-    </div>
-  );
+    <table>
+      {/* ... */}
+      {products.map(product => (
+        <tr key={product.id}>
+          {/* ... */}
+          <td>
+            <DeleteProductButton
+              productId={product.id}
+              productName={product.name}
+              onSuccess={() => handleDeleteSuccess(product.id)}
+            />
+          </td>
+        </tr>
+      ))}
+    </table>
+  )
 }
