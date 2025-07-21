@@ -4,13 +4,24 @@ import Credentials from "next-auth/providers/credentials";
 import { connectToDB } from "@/lib/models/database";
 import { User } from "@/lib/models/User";
 import bcrypt from "bcryptjs";
+import type { DefaultUser } from "next-auth";
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+declare module "next-auth" {
+  interface User extends DefaultUser {
+    role?: string;
+  }
+  
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+    } & DefaultUser;
+  }
+}
+
+import type { AuthOptions, SessionStrategy } from "next-auth";
+
+export const authOptions: AuthOptions = {
   providers: [
     Credentials({
       credentials: {
@@ -19,7 +30,8 @@ export const {
       },
       async authorize(credentials) {
         await connectToDB();
-        if (!credentials || !credentials.email) return null;
+        if (!credentials?.email) return null;
+        
         const user = await User.findOne({ email: credentials.email });
         if (!user) return null;
 
@@ -39,14 +51,17 @@ export const {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) token.role = user.id;
+    async jwt({ token, user }: { token: import("next-auth/jwt").JWT; user?: import("next-auth").User }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: import("next-auth").Session; token: import("next-auth/jwt").JWT }) {
       if (session.user) {
-        session.user.id = token.sub!;
-        session.user.id = token.role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
       return session;
     },
@@ -55,6 +70,13 @@ export const {
     signIn: "/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as SessionStrategy,
   },
-});
+};
+
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth(authOptions);

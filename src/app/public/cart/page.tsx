@@ -2,7 +2,7 @@
 import { connectToDB } from '@/lib/models/database';
 import { Cart } from '@/lib/models/Cart';
 import { Product } from '@/lib/models/product';
-import { auth } from '@/lib/auth';
+import { auth } from '@/app/api/auth/[...nextauth]/route';  
 import CartItems from '@/components/CartItems';
 
 export default async function CartPage() {
@@ -23,7 +23,7 @@ export default async function CartPage() {
   return (
     <div className="container mx-auto py-12">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
-      <CartItems cart={JSON.parse(JSON.stringify(cart))} />
+      <CartItems initialCart={JSON.parse(JSON.stringify(cart))} />
     </div>
   );
 }

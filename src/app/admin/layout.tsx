@@ -1,5 +1,5 @@
 // app/admin/layout.tsx
-import { auth } from '@/lib/auth';
+import { auth } from '@/app/api/auth/[...nextauth]/route';  
 import { redirect } from 'next/navigation';
 import AdminNavbar from '@/components/Navbar';
 

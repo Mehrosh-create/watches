@@ -1,5 +1,5 @@
 // app/api/user/route.ts
-import { auth } from '@/lib/auth';
+import { auth } from '@/app/api/auth/[...nextauth]/route';  
 import { NextResponse } from 'next/server';
 
 export async function GET() {

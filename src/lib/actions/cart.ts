@@ -4,7 +4,7 @@
 import { connectToDB } from '@/lib/models/database';
 import { Cart } from '../models/Cart';
 import { revalidatePath } from 'next/cache';
-import { auth } from '@/lib/auth';
+import { auth } from '@/app/api/auth/[...nextauth]/route';  
 
 export async function addToCart(productId: string, quantity: number = 1) {
   const session = await auth();
@@ -23,7 +23,7 @@ export async function addToCart(productId: string, quantity: number = 1) {
         items: [{ product: productId, quantity }] 
       });
     } else {
-      const existingItem = cart.items.find(item => 
+      const existingItem = cart.items.find((item: { product: { toString: () => string; }; }) => 
         item.product.toString() === productId
       );
       

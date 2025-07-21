@@ -26,7 +26,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {products.map((product) => (
-            <tr key={product._id}>
+            <tr key={product._id.toString()}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-10 w-10">
@@ -67,8 +67,15 @@ export default function ProductsTable({ products }: { products: Product[] }) {
                 >
                   Edit
                 </Link>
-                <form action={deleteProduct} className="inline">
-                  <input type="hidden" name="productId" value={product._id} />
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    await deleteProduct(formData);
+                  }}
+                  className="inline"
+                >
+                  <input type="hidden" name="productId" value={product._id.toString()} />
                   <button
                     type="submit"
                     className="text-red-600 hover:text-red-900"

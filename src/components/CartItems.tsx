@@ -61,7 +61,10 @@ export default function CartItems({ initialCart }: { initialCart: Cart }) {
 
   // Calculate totals
   const subtotal = cart.items.reduce(
-    (sum, item) => sum + (item.product.price * item.quantity),
+    (sum, item) =>
+      typeof item.product === 'object' && 'price' in item.product
+        ? sum + (item.product.price * item.quantity)
+        : sum,
     0
   );
 
@@ -103,17 +106,18 @@ export default function CartItems({ initialCart }: { initialCart: Cart }) {
         <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12">
           <div className="lg:col-span-7">
             <ul className="divide-y divide-gray-200 border-b border-t border-gray-200">
-              {cart.items.map((item) => (
-                <li key={item.product._id} className="flex py-6 sm:py-10">
-                  <div className="flex-shrink-0">
-                    <Image
-                      src={item.product.images[0]}
-                      alt={item.product.name}
-                      width={160}
-                      height={160}
-                      className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
-                    />
-                  </div>
+              {cart.items.map((item, idx) =>
+                (typeof item.product === 'object' && 'images' in item.product && 'name' in item.product && '_id' in item.product ? (
+                  <li key={String(item.product._id)} className="flex py-6 sm:py-10">
+                    <div className="flex-shrink-0">
+                      <Image
+                        src={item.product.images[0]}
+                        alt={item.product.name}
+                        width={160}
+                        height={160}
+                        className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
+                      />
+                    </div>
 
                   <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
                     <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
@@ -139,7 +143,7 @@ export default function CartItems({ initialCart }: { initialCart: Cart }) {
                       <div className="mt-4 sm:mt-0 sm:pr-9">
                         <div className="flex items-center">
                           <button
-                            onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                            onClick={() => updateQuantity(String(item.product._id), item.quantity - 1)}
                             disabled={loading || item.quantity <= 1}
                             className="px-2 py-1 border rounded-l-md disabled:opacity-50"
                           >
@@ -149,7 +153,7 @@ export default function CartItems({ initialCart }: { initialCart: Cart }) {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                            onClick={() => updateQuantity(String(item.product._id), item.quantity + 1)}
                             disabled={loading}
                             className="px-2 py-1 border rounded-r-md disabled:opacity-50"
                           >
@@ -159,7 +163,7 @@ export default function CartItems({ initialCart }: { initialCart: Cart }) {
 
                         <div className="absolute right-0 top-0">
                           <button
-                            onClick={() => removeItem(item.product._id)}
+                            onClick={() => removeItem(String(item.product._id))}
                             disabled={loading}
                             className="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500"
                           >
@@ -180,7 +184,8 @@ export default function CartItems({ initialCart }: { initialCart: Cart }) {
                     </div>
                   </div>
                 </li>
-              ))}
+              ) : null)
+              )}
             </ul>
           </div>
 

@@ -1,21 +1,20 @@
-// lib/auth.ts
-import { auth as nextAuth } from 'next-auth';
-import { DefaultSession } from 'next-auth';
+// src/lib/auth.ts
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import type { DefaultSession, DefaultUser } from "next-auth";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      name: string;
-      email: string;
-      role: 'user' | 'admin';
-    } & DefaultSession['user'];
+      role: string;
+    } & DefaultUser;
   }
 }
 
-export async function auth() {
-  const session = await nextAuth();
-  
+export async function getAuthUser() {
+  const session = await getServerSession(authOptions);
+
   if (!session?.user) {
     return null;
   }
@@ -23,12 +22,12 @@ export async function auth() {
   return {
     user: {
       id: session.user.id,
-      name: session.user.name || '',
-      email: session.user.email || '',
-      role: session.user.role || 'user',
-      image: session.user.image,
+      name: session.user.name ?? '',
+      email: session.user.email ?? '',
+      role: session.user.role ?? 'user',
+      image: session.user.image ?? null,
     },
   };
 }
 
-export type AuthUser = Awaited<ReturnType<typeof auth>>['user'];
+export type AuthUser = NonNullable<Awaited<ReturnType<typeof getAuthUser>>>["user"];

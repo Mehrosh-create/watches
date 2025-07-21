@@ -22,3 +22,16 @@ export async function createProduct(formData: FormData) {
     return { error: 'Failed to create product' };
   }
 }
+
+export async function deleteProduct(formData: FormData) {
+  const productId = formData.get('productId');
+  
+  try {
+    await connectToDB();
+    await Product.findByIdAndDelete(productId);
+    revalidatePath('/admin/products');
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to delete product' };
+  }
+}

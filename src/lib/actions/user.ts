@@ -1,6 +1,6 @@
 // lib/actions/user.ts
 'use server';
-import { auth } from '@/lib/auth';
+import { auth } from '@/app/api/auth/[...nextauth]/route';  
 
 export async function updateProfile(formData: FormData) {
   const session = await auth();
