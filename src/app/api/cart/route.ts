@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     }
 
     // Check if product already in cart
-    const existingItem = cart.items.find(item => 
+    const existingItem = cart.items.find((item: { productId: { toString: () => any } }) => 
       item.productId.toString() === productId
     )
 
@@ -94,7 +94,7 @@ export async function DELETE(req: Request) {
 
     if (cart) {
       cart.items = cart.items.filter(
-        item => item.productId.toString() !== productId
+        (        item: { productId: { toString: () => any } }) => item.productId.toString() !== productId
       )
       await cart.save()
     }

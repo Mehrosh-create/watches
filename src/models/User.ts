@@ -1,3 +1,4 @@
+//models/User.ts
 import mongoose, { Document } from 'mongoose'
 
 interface IUser extends Document {

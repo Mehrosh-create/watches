@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Buttonn'
 import { useCart } from '@/context/CartContext'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
