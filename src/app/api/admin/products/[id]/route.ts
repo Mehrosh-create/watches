@@ -1,23 +1,19 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs'
-import prisma from '@/lib/prisma'
+import dbConnect from '@/lib/db'
+import Product  from '@/models/Product' // Adjust the import path as necessary
 
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { userId } = auth()
+    await dbConnect(); // Connect to MongoDB
 
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 })
+    const deletedProduct = await Product.findByIdAndDelete(params.id);
+
+    if (!deletedProduct) {
+      return new NextResponse('Product not found', { status: 404 })
     }
-
-    await prisma.product.delete({
-      where: {
-        id: params.id,
-      },
-    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

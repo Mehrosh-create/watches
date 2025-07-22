@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Search, ShoppingCart } from 'lucide-react'
+import { Menu, X, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import CartIcon from '../cart/CartIcon'
 import UserMenu from '../auth/UserMenu'

@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { useCart } from '@/context/CartContext'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -38,7 +38,7 @@ export default function AddToCart({ product }: { product: Product }) {
           onClick: () => (window.location.href = '/cart')
         }
       })
-    } catch (error) {
+    } catch  {
       toast.error('Failed to add item to cart')
     } finally {
       setIsLoading(false)

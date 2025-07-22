@@ -1,6 +1,6 @@
-// components/search/SearchFilters.tsx
-import React, { useState } from 'react'
-import { useRouter } from 'next/router'
+"use client"
+import React, { useState, useEffect } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { SlidersHorizontal, X } from 'lucide-react'
 
 interface SearchFiltersProps {
@@ -11,7 +11,6 @@ interface SearchFiltersProps {
   onFilterChange?: (filters: any) => void
 }
 
-// Add the index signature to the filter state type!
 type FilterState = {
   category: string
   priceMin: string | number
@@ -29,49 +28,59 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onFilterChange,
 }) => {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
-  const [selectedFilters, setSelectedFilters] = useState<FilterState>({
-    category: router.query.category as string || '',
-    priceMin: router.query.priceMin as string || priceRange.min,
-    priceMax: router.query.priceMax as string || priceRange.max,
-    brand: typeof router.query.brand === 'string'
-      ? router.query.brand.split(',')
-      : Array.isArray(router.query.brand) ? router.query.brand : [],
-    rating: typeof router.query.rating === 'string'
-      ? router.query.rating.split(',')
-      : Array.isArray(router.query.rating) ? router.query.rating : [],
-  })
 
+  // Helper to get an array from param
+  const getArrayParam = (param: string | null) =>
+    param ? param.split(',') : []
+
+  // On mount: set initial filters from query params
+  const [selectedFilters, setSelectedFilters] = useState<FilterState>(() => ({
+    category: searchParams.get('category') || '',
+    priceMin: searchParams.get('priceMin') || priceRange.min,
+    priceMax: searchParams.get('priceMax') || priceRange.max,
+    brand: getArrayParam(searchParams.get('brand')),
+    rating: getArrayParam(searchParams.get('rating')),
+  }))
+
+  // Sync to query string when params change (for SSR navigation or reload)
+  useEffect(() => {
+    setSelectedFilters({
+      category: searchParams.get('category') || '',
+      priceMin: searchParams.get('priceMin') || priceRange.min,
+      priceMax: searchParams.get('priceMax') || priceRange.max,
+      brand: getArrayParam(searchParams.get('brand')),
+      rating: getArrayParam(searchParams.get('rating')),
+    })
+    // eslint-disable-next-line
+  }, [searchParams])
+
+  // Helper: Build URL with new filters
+  const buildQueryString = (filters: FilterState) => {
+    const params = new URLSearchParams()
+    if (filters.category) params.set('category', filters.category)
+    if (filters.priceMin && filters.priceMin !== priceRange.min) params.set('priceMin', String(filters.priceMin))
+    if (filters.priceMax && filters.priceMax !== priceRange.max) params.set('priceMax', String(filters.priceMax))
+    if (filters.brand.length) params.set('brand', filters.brand.join(','))
+    if (filters.rating.length) params.set('rating', filters.rating.join(','))
+    return params.toString()
+  }
+
+  // Change filters
   const handleFilterChange = (filterType: string, value: any) => {
     const newFilters = {
       ...selectedFilters,
       [filterType]: value,
     }
-
     setSelectedFilters(newFilters)
 
-    // Update URL query params
-    const query = { ...router.query, ...newFilters }
+    // Update URL
+    const queryString = buildQueryString(newFilters)
+    router.push(queryString ? `${pathname}?${queryString}` : pathname)
 
-    // Remove empty filters
-    Object.keys(query).forEach(key => {
-      if (!query[key] || (Array.isArray(query[key]) && query[key].length === 0)) {
-        delete query[key]
-      }
-    })
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query,
-      },
-      undefined,
-      { shallow: true }
-    )
-
-    if (onFilterChange) {
-      onFilterChange(newFilters)
-    }
+    if (onFilterChange) onFilterChange(newFilters)
   }
 
   const handlePriceChange = (
@@ -108,8 +117,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       brand: [],
       rating: [],
     })
-    router.push({
-      pathname: router.pathname,
+    router.push(pathname)
+    if (onFilterChange) onFilterChange({
+      category: '',
+      priceMin: priceRange.min,
+      priceMax: priceRange.max,
+      brand: [],
+      rating: [],
     })
   }
 

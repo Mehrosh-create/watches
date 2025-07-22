@@ -19,7 +19,7 @@ export async function GET() {
       .exec()
     
     return NextResponse.json(cart || { items: [] })
-  } catch (error) {
+  } catch  {
     return NextResponse.json(
       { error: 'Failed to fetch cart' },
       { status: 500 }
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
     await cart.save()
     return NextResponse.json(cart)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update cart' },
       { status: 500 }
@@ -100,7 +100,7 @@ export async function DELETE(req: Request) {
     }
 
     return NextResponse.json(cart || { items: [] })
-  } catch (error) {
+  } catch  {
     return NextResponse.json(
       { error: 'Failed to remove item' },
       { status: 500 }

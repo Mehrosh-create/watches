@@ -16,7 +16,7 @@ type PaymentFormData = z.infer<typeof paymentSchema>
 
 export default function PaymentPage() {
   const { cart, shipping } = useCart()
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<PaymentFormData>({
+  const { register, handleSubmit, watch } = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       paymentMethod: 'card',

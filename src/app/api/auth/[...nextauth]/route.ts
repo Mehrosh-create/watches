@@ -58,24 +58,31 @@ const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.name = token.name;
-        session.user.email = token.email;
-      }
-      return session;
-    },
+ callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id;
+      token.name = user.name;
+      token.email = user.email;
+      // Add role from your user object (Mongoose returns user.role if you store it)
+      // Fetch the user from DB if needed
+      const dbUser = await User.findOne({ email: user.email }).lean();
+      token.role = dbUser?.role ?? "user";
+    }
+    return token;
   },
+  async session({ session, token }) {
+    if (token && session.user) {
+      session.user.id = token.id as string;
+      session.user.name = token.name;
+      session.user.email = token.email;
+      // Add role
+      (session.user as any).role = token.role;
+    }
+    return session;
+  },
+},
+
   pages: {
     signIn: "/auth/login",
     error: "/auth/login",
@@ -86,3 +93,4 @@ const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+export { authOptions };

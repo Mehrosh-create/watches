@@ -25,7 +25,7 @@ export default function AddProductPage() {
         const errorData = await response.json()
         setError(errorData.message || "Failed to create product")
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred")
     } finally {
       setIsLoading(false)

@@ -1,7 +1,7 @@
-// types/product.d.ts
-declare namespace Product {
+// types/product.ts or types/product.d.ts
+export namespace Product {
   // Base product structure
-  interface Base {
+  export interface Base {
     id: string
     sku: string
     name: string
@@ -22,14 +22,14 @@ declare namespace Product {
   }
 
   // Product listing (for cards/grids)
-  interface Listing extends Pick<Base, 
+  export interface Listing extends Pick<Base,
     'id' | 'name' | 'price' | 'originalPrice' | 'discount' | 'images' | 'rating'
   > {
     variants?: Variant[]
   }
 
   // Detailed product view
-  interface Detailed extends Base {
+  export interface Detailed extends Base {
     specifications: Record<string, string>
     variants: Variant[]
     relatedProducts: Listing[]
@@ -37,7 +37,7 @@ declare namespace Product {
   }
 
   // Product variant
-  interface Variant {
+  export interface Variant {
     id: string
     name: string
     price: number
@@ -47,7 +47,7 @@ declare namespace Product {
   }
 
   // Product review
-  interface Review {
+  export interface Review {
     id: string
     userId: string
     userName: string
@@ -59,7 +59,7 @@ declare namespace Product {
   }
 
   // Filter options
-  interface FilterOptions {
+  export interface FilterOptions {
     categories: string[]
     priceRange: {
       min: number
@@ -68,8 +68,8 @@ declare namespace Product {
     attributes: Record<string, string[]> // { color: ['red', 'blue'], size: ['S', 'M'] }
   }
 
-  // Search params
-  interface SearchParams {
+  // Search params (with **only one** string index signature)
+  export interface SearchParams {
     query?: string
     category?: string
     minPrice?: number
@@ -77,6 +77,7 @@ declare namespace Product {
     sort?: 'price_asc' | 'price_desc' | 'newest' | 'rating'
     page?: number
     limit?: number
-    [key: string]: any // For dynamic filters
+    // For dynamic filters (only one allowed!):
+    [key: string]: string | number | undefined
   }
 }

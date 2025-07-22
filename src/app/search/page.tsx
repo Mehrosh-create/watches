@@ -10,7 +10,7 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   // This will error unless you implement searchProducts as shown above!
-  const { products, total, categories, priceRange, brands, ratings } = await searchProducts(searchParams)
+  const { products, categories, priceRange, brands, ratings } = await searchProducts(searchParams)
 
   return (
     <div className="container mx-auto p-4">

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../../auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import Product from "@/models/Product"
 import dbConnect from "@/lib/db"
 
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     const productData = await req.json()
     const product = await Product.create(productData)
     return NextResponse.json(product, { status: 201 })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to create product" },
       { status: 500 }
