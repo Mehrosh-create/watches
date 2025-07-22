@@ -1,13 +1,25 @@
-// app/checkout/shipping/page.tsx
 'use client'
 
 import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
 import CheckoutSteps from '@/components/checkout/CheckoutSteps'
 
+// Define ShippingInfo type (or import from your context/types if exported)
+type ShippingInfo = {
+  firstName: string
+  lastName: string
+  address: string
+  city: string
+  country: string
+  postalCode: string
+  phone: string
+  shippingMethod: 'standard' | 'express'
+}
+
 export default function ShippingPage() {
   const { updateShipping } = useCart()
-  const [formData, setFormData] = useState({
+  // Strictly type the form data for shippingMethod
+  const [formData, setFormData] = useState<ShippingInfo>({
     firstName: '',
     lastName: '',
     address: '',
@@ -15,13 +27,13 @@ export default function ShippingPage() {
     country: '',
     postalCode: '',
     phone: '',
-    shippingMethod: 'standard'
+    shippingMethod: 'standard',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.firstName.trim()) newErrors.firstName = 'First name is required'
     if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required'
     if (!formData.address.trim()) newErrors.address = 'Address is required'
@@ -36,7 +48,7 @@ export default function ShippingPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (validateForm()) {
       updateShipping(formData)
       window.location.href = '/checkout/payment'
@@ -47,9 +59,11 @@ export default function ShippingPage() {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'shippingMethod'
+        ? (value as 'standard' | 'express')
+        : value
     }))
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => {
@@ -64,9 +78,9 @@ export default function ShippingPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-8">Shipping Information</h1>
-        
+
         <CheckoutSteps activeStep={1} />
-        
+
         <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block mb-1">First Name</label>
@@ -78,7 +92,7 @@ export default function ShippingPage() {
             />
             {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
           </div>
-          
+
           <div>
             <label className="block mb-1">Last Name</label>
             <input
@@ -89,7 +103,7 @@ export default function ShippingPage() {
             />
             {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
           </div>
-          
+
           <div className="md:col-span-2">
             <label className="block mb-1">Address</label>
             <input
@@ -100,7 +114,7 @@ export default function ShippingPage() {
             />
             {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
           </div>
-          
+
           <div>
             <label className="block mb-1">City</label>
             <input
@@ -111,7 +125,7 @@ export default function ShippingPage() {
             />
             {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
           </div>
-          
+
           <div>
             <label className="block mb-1">Country</label>
             <select
@@ -127,7 +141,7 @@ export default function ShippingPage() {
             </select>
             {errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
           </div>
-          
+
           <div>
             <label className="block mb-1">Postal Code</label>
             <input
@@ -138,7 +152,7 @@ export default function ShippingPage() {
             />
             {errors.postalCode && <p className="text-red-500 text-sm">{errors.postalCode}</p>}
           </div>
-          
+
           <div>
             <label className="block mb-1">Phone Number</label>
             <input
@@ -150,7 +164,7 @@ export default function ShippingPage() {
             />
             {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
           </div>
-          
+
           <div className="md:col-span-2">
             <h3 className="font-medium mb-2">Shipping Method</h3>
             <div className="space-y-2">
@@ -178,7 +192,7 @@ export default function ShippingPage() {
               </label>
             </div>
           </div>
-          
+
           <div className="md:col-span-2 flex justify-end">
             <button
               type="submit"

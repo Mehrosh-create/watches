@@ -1,14 +1,24 @@
 // components/search/SearchFilters.tsx
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { SlidersHorizontal, X } from 'lucide-react';
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import { SlidersHorizontal, X } from 'lucide-react'
 
 interface SearchFiltersProps {
-  categories: string[];
-  priceRange: { min: number; max: number };
-  brands?: string[];
-  ratings?: number[];
-  onFilterChange?: (filters: any) => void;
+  categories: string[]
+  priceRange: { min: number; max: number }
+  brands?: string[]
+  ratings?: number[]
+  onFilterChange?: (filters: any) => void
+}
+
+// Add the index signature to the filter state type!
+type FilterState = {
+  category: string
+  priceMin: string | number
+  priceMax: string | number
+  brand: string[]
+  rating: string[]
+  [key: string]: any
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -18,65 +28,77 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   ratings = [5, 4, 3, 2, 1],
   onFilterChange,
 }) => {
-  const router = useRouter();
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState({
-    category: router.query.category || '',
-    priceMin: router.query.priceMin || priceRange.min,
-    priceMax: router.query.priceMax || priceRange.max,
-    brand: router.query.brand?.toString().split(',') || [],
-    rating: router.query.rating?.toString().split(',') || [],
-  });
+  const router = useRouter()
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
+  const [selectedFilters, setSelectedFilters] = useState<FilterState>({
+    category: router.query.category as string || '',
+    priceMin: router.query.priceMin as string || priceRange.min,
+    priceMax: router.query.priceMax as string || priceRange.max,
+    brand: typeof router.query.brand === 'string'
+      ? router.query.brand.split(',')
+      : Array.isArray(router.query.brand) ? router.query.brand : [],
+    rating: typeof router.query.rating === 'string'
+      ? router.query.rating.split(',')
+      : Array.isArray(router.query.rating) ? router.query.rating : [],
+  })
 
   const handleFilterChange = (filterType: string, value: any) => {
     const newFilters = {
       ...selectedFilters,
       [filterType]: value,
-    };
-    
-    setSelectedFilters(newFilters);
-    
+    }
+
+    setSelectedFilters(newFilters)
+
     // Update URL query params
-    const query = { ...router.query, ...newFilters };
-    
+    const query = { ...router.query, ...newFilters }
+
     // Remove empty filters
     Object.keys(query).forEach(key => {
       if (!query[key] || (Array.isArray(query[key]) && query[key].length === 0)) {
-        delete query[key];
+        delete query[key]
       }
-    });
+    })
 
-    router.push({
-      pathname: router.pathname,
-      query,
-    }, undefined, { shallow: true });
+    router.push(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true }
+    )
 
     if (onFilterChange) {
-      onFilterChange(newFilters);
+      onFilterChange(newFilters)
     }
-  };
+  }
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'min' | 'max') => {
-    const value = parseFloat(e.target.value);
+  const handlePriceChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: 'min' | 'max'
+  ) => {
+    const value = parseFloat(e.target.value)
     handleFilterChange(
       type === 'min' ? 'priceMin' : 'priceMax',
       Math.min(Math.max(value, priceRange.min), priceRange.max)
-    );
-  };
+    )
+  }
 
   const toggleBrand = (brand: string) => {
     const newBrands = selectedFilters.brand.includes(brand)
-      ? selectedFilters.brand.filter(b => b !== brand)
-      : [...selectedFilters.brand, brand];
-    handleFilterChange('brand', newBrands);
-  };
+      ? selectedFilters.brand.filter((b: string) => b !== brand)
+      : [...selectedFilters.brand, brand]
+    handleFilterChange('brand', newBrands)
+  }
 
   const toggleRating = (rating: number) => {
-    const newRatings = selectedFilters.rating.includes(rating.toString())
-      ? selectedFilters.rating.filter(r => r !== rating.toString())
-      : [...selectedFilters.rating, rating.toString()];
-    handleFilterChange('rating', newRatings);
-  };
+    const ratingStr = rating.toString()
+    const newRatings = selectedFilters.rating.includes(ratingStr)
+      ? selectedFilters.rating.filter((r: string) => r !== ratingStr)
+      : [...selectedFilters.rating, ratingStr]
+    handleFilterChange('rating', newRatings)
+  }
 
   const clearAllFilters = () => {
     setSelectedFilters({
@@ -85,11 +107,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       priceMax: priceRange.max,
       brand: [],
       rating: [],
-    });
+    })
     router.push({
       pathname: router.pathname,
-    });
-  };
+    })
+  }
 
   return (
     <div className="relative">
@@ -218,10 +240,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
 
           {/* Clear All button */}
-          {(selectedFilters.category || 
-            selectedFilters.brand.length > 0 || 
-            selectedFilters.rating.length > 0 || 
-            selectedFilters.priceMin !== priceRange.min || 
+          {(selectedFilters.category ||
+            selectedFilters.brand.length > 0 ||
+            selectedFilters.rating.length > 0 ||
+            selectedFilters.priceMin !== priceRange.min ||
             selectedFilters.priceMax !== priceRange.max) && (
             <button
               onClick={clearAllFilters}
@@ -235,13 +257,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
       {/* Overlay for mobile */}
       {isMobileFiltersOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-40"
           onClick={() => setIsMobileFiltersOpen(false)}
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default SearchFilters;
+export default SearchFilters

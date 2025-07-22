@@ -14,6 +14,17 @@ declare namespace Cart {
     }
   }
 
+  interface ShippingInfo {
+    firstName: string
+    lastName: string
+    address: string
+    city: string
+    country: string
+    postalCode: string
+    phone: string
+    shippingMethod: 'standard' | 'express'
+  }
+
   interface ContextType {
     items: Item[]
     count: number
@@ -24,6 +35,7 @@ declare namespace Cart {
     removeItem: (productId: string) => Promise<void>
     clearCart: () => void
     applyCoupon?: (code: string) => Promise<Coupon>
+    shipping?: ShippingInfo // <-- Add if you want it in context
   }
 
   interface Coupon {

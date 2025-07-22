@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import CartItem from '@/components/cart/CartItem'
 import Link from 'next/link'
 
+// CartItem type - move to types/cart.ts if used elsewhere!
 type CartItem = {
   productId: {
     _id: string
@@ -14,17 +15,23 @@ type CartItem = {
   quantity: number
 }
 
+type CartResponse = {
+  items: CartItem[]
+}
+
 export default function CartPage() {
-  const [cart, setCart] = useState<{ items: CartItem[] }>({ items: [] })
+  const [cart, setCart] = useState<CartResponse>({ items: [] })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const response = await fetch('/api/cart')
+        if (!response.ok) throw new Error('Failed to fetch')
         const data = await response.json()
         setCart(data)
       } catch (error) {
+        setCart({ items: [] }) // Reset cart on error
         console.error('Error fetching cart:', error)
       } finally {
         setLoading(false)
@@ -38,11 +45,10 @@ export default function CartPage() {
     try {
       const response = await fetch('/api/cart', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId, quantity }),
       })
+      if (!response.ok) throw new Error('Failed to update')
       const data = await response.json()
       setCart(data)
     } catch (error) {
@@ -54,11 +60,10 @@ export default function CartPage() {
     try {
       const response = await fetch('/api/cart', {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId }),
       })
+      if (!response.ok) throw new Error('Failed to remove')
       const data = await response.json()
       setCart(data)
     } catch (error) {
@@ -67,7 +72,7 @@ export default function CartPage() {
   }
 
   const total = cart.items.reduce(
-    (sum, item) => sum + item.productId.price * item.quantity,
+    (sum, item) => sum + (item.productId.price * item.quantity),
     0
   )
 

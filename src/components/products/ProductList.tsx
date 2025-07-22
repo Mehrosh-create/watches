@@ -1,13 +1,13 @@
 // components/products/ProductList.tsx
-import React from 'react';
-import ProductCard from './ProductCard';
-import { Product } from '@/types/product'; // Assuming you have a Product type defined
+import React from 'react'
+import ProductCard from './ProductCard'
+import { Product } from '@/types/product' // Product is now a namespace
 
 interface ProductListProps {
-  products: Product[];
-  title?: string;
-  showViewAll?: boolean;
-  viewAllLink?: string;
+  products: Product.Listing[]  // <--- Use the correct type from your Product namespace
+  title?: string
+  showViewAll?: boolean
+  viewAllLink?: string
 }
 
 const ProductList: React.FC<ProductListProps> = ({
@@ -21,7 +21,7 @@ const ProductList: React.FC<ProductListProps> = ({
       <div className="py-12 text-center">
         <p className="text-gray-500">No products found</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -50,13 +50,13 @@ const ProductList: React.FC<ProductListProps> = ({
             name={product.name}
             price={product.price}
             discount={product.discount}
-            imageUrl={product.images[0]} // Assuming images is an array
-            rating={product.rating}
+            imageUrl={product.images[0]}
+  rating={product.rating?.average} 
           />
         ))}
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default ProductList;
+export default ProductList

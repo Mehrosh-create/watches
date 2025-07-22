@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Lato } from "next/font/google"; 
+import { Lato } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
+import { SessionProvider } from "next-auth/react"; // <-- Add this import
 
 const lato = Lato({
   subsets: ["latin"],
   weight: ["100", "300", "400", "700", "900"],
-  variable: '--font-lato' 
+  variable: '--font-lato'
 });
 
 export const metadata: Metadata = {
@@ -22,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={lato.className}>
       <body className="antialiased">
-        <Navbar />
-        {children}
+        <SessionProvider> {/* <-- Wrap here */}
+          <Navbar />
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );
