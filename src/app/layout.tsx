@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
-import { SessionProvider } from "next-auth/react"; // <-- Add this import
+import { Providers } from "./providers";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -23,10 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={lato.className}>
       <body className="antialiased">
-        <SessionProvider> {/* <-- Wrap here */}
+        <Providers>
           <Navbar />
           {children}
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   );

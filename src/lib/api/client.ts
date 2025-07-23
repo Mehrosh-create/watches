@@ -1,7 +1,15 @@
 // src/lib/api/client.ts
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
-// Define your API response type
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosHeaders,
+} from 'axios';
+
+// ----- API Response Type -----
 export interface ApiResponse<T = any> {
   data?: T;
   error?: {
@@ -11,55 +19,59 @@ export interface ApiResponse<T = any> {
   success: boolean;
 }
 
-// Create configured Axios instance
+// ----- Axios Instance -----
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
-  timeout: 10000, // 10 seconds
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor for adding auth token
+// ----- JWT Request Interceptor -----
 apiClient.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('jwt') : null;
     if (token) {
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+      // Use .set method for Axios v1+ (AxiosHeaders)
+      if (config.headers && typeof (config.headers as AxiosHeaders).set === 'function') {
+        (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
+      } else if (config.headers) {
+        // Fallback for legacy/edge cases
+        (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+      }
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling errors
+// ----- Response/Error Interceptor -----
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return {
-      ...response,
-      success: true,
-    };
-  },
+  (response: AxiosResponse) => ({
+    ...response,
+    success: true,
+  }),
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized (e.g., redirect to login)
       if (typeof window !== 'undefined') {
         window.location.href = '/auth/login';
       }
     }
-    
     return Promise.reject({
       success: false,
       error: {
-        message: error.response?.data?.message || error.message,
+        message:
+          (error.response?.data as any)?.message ||
+          error.message ||
+          'Unknown error',
         code: error.code,
       },
     });
   }
 );
 
-// Generic request function
+// ----- API Request Wrapper -----
 export async function apiRequest<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
   try {
     const response = await apiClient(config);
@@ -67,18 +79,41 @@ export async function apiRequest<T>(config: AxiosRequestConfig): Promise<ApiResp
       data: response.data,
       success: true,
     };
-  } catch (error) {
+  } catch (error: any) {
+    // Safely access error props
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'error' in error &&
+      typeof error.error === 'object'
+    ) {
+      return {
+        error: {
+          message: error.error?.message || 'API request failed',
+          code: error.error?.code,
+        },
+        success: false,
+      };
+    } else if (error instanceof AxiosError) {
+      return {
+        error: {
+          message:
+            (error.response?.data as any)?.message ||
+            error.message ||
+            'API request failed',
+          code: error.code,
+        },
+        success: false,
+      };
+    }
     return {
-      error: {
-        message: error.error?.message || 'API request failed',
-        code: error.error?.code,
-      },
+      error: { message: 'API request failed', code: undefined },
       success: false,
     };
   }
 }
 
-// Specific API methods for your e-commerce app
+// ----- E-Commerce API Methods -----
 export const ecommerceApi = {
   // Product endpoints
   getProducts: () => apiRequest<{ products: Product[] }>({ method: 'GET', url: '/products' }),
@@ -91,14 +126,14 @@ export const ecommerceApi = {
 
   // Auth endpoints
   login: (email: string, password: string) =>
-    apiRequest<{ token: string; user: User }>({ 
-      method: 'POST', 
-      url: '/auth/login', 
-      data: { email, password } 
+    apiRequest<{ token: string; user: User }>({
+      method: 'POST',
+      url: '/auth/login',
+      data: { email, password },
     }),
 };
 
-// Type definitions (put these in separate types file if preferred)
+// ----- Types (can move to a separate types file) -----
 interface Product {
   id: string;
   name: string;
