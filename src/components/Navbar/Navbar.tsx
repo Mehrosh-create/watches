@@ -35,7 +35,8 @@ export default function Navbar() {
     { name: 'Shop', href: '/products' },
     { name: 'Categories', href: '/categories' },
     { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' }
+    { name: 'Contact', href: '/contact' },
+    { name: 'New Arrivals', href: '/new-arrivals' }
   ]
 
   return (
