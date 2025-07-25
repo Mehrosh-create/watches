@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FiLock, FiMail, FiFacebook, FiTwitter, FiGithub } from 'react-icons/fi'
+import { FiLock, FiMail, FiFacebook, FiTwitter, FiGithub, FiUserPlus } from 'react-icons/fi'
 import Image from 'next/image'
 
 export default function SignInPage() {
@@ -18,12 +18,6 @@ export default function SignInPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link href="/register" className="font-medium text-black hover:text-gray-800">
-            create a new account
-          </Link>
-        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -140,6 +134,19 @@ export default function SignInPage() {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Added Register Button */}
+          <div className="mt-6">
+            <Link href="/register">
+              <button
+                type="button"
+                className="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+              >
+                <FiUserPlus className="mr-2 h-4 w-4" />
+                Create new account
+              </button>
+            </Link>
           </div>
         </div>
 

@@ -1,16 +1,27 @@
-import { NextResponse } from "next/server"
-import Product from "@/models/Product"
+import { NextResponse } from 'next/server'
+import Product from '@/models/Product'
+import dbConnect from '@/lib/db'
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const query = searchParams.get("q")
+export async function GET(request: Request) {
+  try {
+    await dbConnect()
+    const { searchParams } = new URL(request.url)
+    const query = searchParams.get('q') || ''
+    const limit = parseInt(searchParams.get('limit') || '10')
 
-  if (!query) return NextResponse.json([])
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } }
+      ]
+    }).limit(limit)
 
-  const results = await Product.find(
-    { $text: { $search: query } },
-    { score: { $meta: "textScore" } }
-  ).sort({ score: { $meta: "textScore" } })
-
-  return NextResponse.json(results)
+    return NextResponse.json({ success: true, data: products })
+  } catch (error) {
+    console.error('SEARCH_ERROR:', error)
+    return NextResponse.json(
+      { success: false, error: "Failed to perform search" },
+      { status: 500 }
+    )
+  }
 }

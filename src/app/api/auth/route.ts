@@ -1,34 +1,59 @@
-import NextAuth from 'next-auth'
+// src/app/api/auth/route.ts
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import User from '@/models/User'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
+import { AdapterUser } from 'next-auth/adapters'
 
-export const authOptions = {
+interface UserSession {
+  id: string
+  name?: string | null
+  email?: string | null
+  role?: string
+}
+
+interface Credentials {
+  email: string
+  password: string
+}
+
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
+      id: 'credentials',
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' }
       },
-      async authorize(credentials) {
-        await dbConnect()
-        
-        // Find user by email
-        const user = await User.findOne({ email: credentials?.email })
-        if (!user) return null
+      async authorize(credentials): Promise<UserSession | null> {
+        try {
+          await dbConnect()
+          
+          if (!credentials?.email || !credentials.password) {
+            throw new Error('Email and password are required')
+          }
 
-        // Compare passwords
-        const isValid = await bcrypt.compare(credentials!.password, user.password)
-        if (!isValid) return null
+          const user = await User.findOne({ email: credentials.email }).select('+password')
+          if (!user) {
+            throw new Error('Invalid credentials')
+          }
 
-        // Return user object without password
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          role: user.role
+          const isValid = await bcrypt.compare(credentials.password, user.password)
+          if (!isValid) {
+            throw new Error('Invalid credentials')
+          }
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role || 'user'
+          }
+        } catch (error) {
+          console.error('Authentication error:', error)
+          return null
         }
       }
     })
@@ -36,21 +61,29 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role
+        token.role = (user as UserSession).role
+        token.id = (user as UserSession).id
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role
+        session.user.role = token.role as string
+        session.user.id = token.id as string
       }
       return session
     }
   },
   pages: {
-    signIn: '/auth/login'
+    signIn: '/auth/login',
+    error: '/auth/login'
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60 // 30 days
+  },
+  debug: process.env.NODE_ENV === 'development'
 }
 
 const handler = NextAuth(authOptions)

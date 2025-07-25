@@ -3,7 +3,22 @@ import { useState, useEffect } from 'react';
 import { FiFilter, FiSearch, FiHeart, FiShoppingCart } from 'react-icons/fi';
 import Image from 'next/image';
 
-const allProducts = [
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  rating: number;
+  brand: string;
+  dateAdded: string;
+}
+
+interface PriceRange {
+  label: string;
+  value: string;
+}
+
+const allProducts: Product[] = [
   {
     id: 1,
     name: 'Luxury Chronograph',
@@ -67,16 +82,16 @@ const filters = {
     { label: '$100 - $500', value: '100-500' },
     { label: '$500 - $1000', value: '500-1000' },
     { label: 'Over $1000', value: '1000-10000' }
-  ]
+  ] as PriceRange[]
 };
 
 export default function ShopPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filteredProducts, setFilteredProducts] = useState(allProducts);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOption, setSortOption] = useState('featured');
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortOption, setSortOption] = useState<string>('featured');
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
   const productsPerPage = 6;
 
   // Apply filters and sorting
@@ -116,7 +131,7 @@ export default function ShopPage() {
         results.sort((a, b) => b.price - a.price);
         break;
       case 'newest':
-        results.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+        results.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
         break;
       case 'best-rated':
         results.sort((a, b) => b.rating - a.rating);
@@ -137,12 +152,12 @@ export default function ShopPage() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   // Pagination controls
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
 
   // Handle brand selection
-  const handleBrandSelect = (brand) => {
+  const handleBrandSelect = (brand: string) => {
     setSelectedBrands(prev => 
       prev.includes(brand) 
         ? prev.filter(b => b !== brand) 
@@ -151,7 +166,7 @@ export default function ShopPage() {
   };
 
   // Handle price range selection
-  const handlePriceRangeSelect = (range) => {
+  const handlePriceRangeSelect = (range: string) => {
     setSelectedPriceRanges(prev => 
       prev.includes(range) 
         ? prev.filter(r => r !== range) 
@@ -169,7 +184,7 @@ export default function ShopPage() {
 
   // Generate page numbers with ellipsis
   const getPageNumbers = () => {
-    const pageNumbers = [];
+    const pageNumbers: (number | string)[] = [];
     const maxVisiblePages = 5;
     
     if (totalPages <= maxVisiblePages) {
@@ -275,10 +290,6 @@ export default function ShopPage() {
 
           <button 
             className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
-            onClick={() => {
-              // The useEffect will automatically apply the filters
-              // This button is now more for visual confirmation
-            }}
           >
             Apply Filters
           </button>
@@ -326,6 +337,7 @@ export default function ShopPage() {
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        priority={false}
                       />
                       <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
                         <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100">
@@ -375,7 +387,7 @@ export default function ShopPage() {
                       ) : (
                         <button
                           key={number}
-                          onClick={() => paginate(number)}
+                          onClick={() => paginate(number as number)}
                           className={`px-3 py-1 rounded ${currentPage === number ? 'bg-black text-white' : 'border hover:bg-gray-100'}`}
                         >
                           {number}

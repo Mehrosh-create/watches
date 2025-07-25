@@ -2,13 +2,14 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { FiLock, FiMail, FiUser } from 'react-icons/fi'
+import { FiLock, FiMail, FiUser, FiChevronDown } from 'react-icons/fi'
 import Link from 'next/link'
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [userType, setUserType] = useState('user') // Default to 'user'
   const [error, setError] = useState('')
   const router = useRouter()
 
@@ -22,7 +23,7 @@ export default function RegisterPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role: userType }),
       })
 
       if (!response.ok) {
@@ -51,12 +52,7 @@ export default function RegisterPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Create a new account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link href="/signin" className="font-medium text-black hover:text-gray-800">
-            sign in to your existing account
-          </Link>
-        </p>
+      
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -129,6 +125,28 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
                 />
+              </div>
+            </div>
+
+            {/* User Type Dropdown */}
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium text-gray-700">
+                Account Type
+              </label>
+              <div className="mt-1 relative">
+                <select
+                  id="userType"
+                  name="userType"
+                  value={userType}
+                  onChange={(e) => setUserType(e.target.value)}
+                  className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black appearance-none"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <FiChevronDown className="h-5 w-5 text-gray-400" />
+                </div>
               </div>
             </div>
 
