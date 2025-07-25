@@ -135,6 +135,7 @@ export default function ShippingPage() {
               className="w-full px-4 py-2 border rounded-lg"
             >
               <option value="">Select Country</option>
+               <option value="PK">Pakistan</option>
               <option value="US">United States</option>
               <option value="CA">Canada</option>
               {/* Add more countries */}
@@ -196,7 +197,7 @@ export default function ShippingPage() {
           <div className="md:col-span-2 flex justify-end">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+              className="bg-gray-600 text-white px-6 py-3 rounded-lg"
             >
               Continue to Payment
             </button>

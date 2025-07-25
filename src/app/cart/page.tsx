@@ -22,10 +22,52 @@ interface CartResponse {
   items: CartItem[]
 }
 
+// Sample product data for demo purposes
+const sampleProducts: Product[] = [
+  {
+    _id: '1',
+    name: 'Luxury Chronograph Watch',
+    price: 499.99,
+    image: '/chronograph.jpg'
+  },
+  {
+    _id: '2',
+    name: 'Classic Leather Strap Watch',
+    price: 349.99,
+    image: '/Leather.jpg'
+  },
+  {
+    _id: '3',
+    name: 'Sport Pro Digital Watch',
+    price: 199.99,
+    image: '/Sportpro.jpg'
+  },
+  {
+    _id: '4',
+    name: 'Minimalist Silver Watch',
+    price: 249.99,
+    image: '/minimalist.jpg'
+  }
+]
+
 export default function CartPage() {
   const [cart, setCart] = useState<CartResponse>({ items: [] })
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+
+  // Generate random cart items for demo
+  const generateRandomCart = (): CartResponse => {
+    const numItems = Math.floor(Math.random() * 3) + 1 // 1-3 items
+    const shuffled = [...sampleProducts].sort(() => 0.5 - Math.random())
+    const selected = shuffled.slice(0, numItems)
+    
+    return {
+      items: selected.map(product => ({
+        productId: product,
+        quantity: Math.floor(Math.random() * 3) + 1 // 1-3 quantity
+      }))
+    }
+  }
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -33,10 +75,17 @@ export default function CartPage() {
         const response = await fetch('/api/cart')
         if (!response.ok) throw new Error('Failed to fetch cart')
         const data = await response.json()
-        setCart(data)
+        
+        // If cart is empty, use demo data
+        if (data.items && data.items.length === 0) {
+          setCart(generateRandomCart())
+        } else {
+          setCart(data)
+        }
       } catch (error) {
         console.error('Error fetching cart:', error)
-        setCart({ items: [] })
+        // Use demo data if API fails
+        setCart(generateRandomCart())
       } finally {
         setLoading(false)
       }
@@ -57,6 +106,14 @@ export default function CartPage() {
       setCart(data)
     } catch (error) {
       console.error('Error updating cart:', error)
+      // For demo purposes, update locally
+      setCart(prev => ({
+        items: prev.items.map(item => 
+          item.productId._id === productId 
+            ? { ...item, quantity: Math.max(1, quantity) } 
+            : item
+        )
+      }))
     }
   }
 
@@ -72,6 +129,10 @@ export default function CartPage() {
       setCart(data)
     } catch (error) {
       console.error('Error removing item:', error)
+      // For demo purposes, remove locally
+      setCart(prev => ({
+        items: prev.items.filter(item => item.productId._id !== productId)
+      }))
     }
   }
 
@@ -119,14 +180,18 @@ export default function CartPage() {
           <div className="md:col-span-2 space-y-6">
             {cart.items.map((item) => (
               <div key={item.productId._id} className="bg-white p-6 rounded-lg shadow-sm flex flex-col sm:flex-row border border-gray-100">
-                <div className="relative w-full sm:w-32 h-32 mb-4 sm:mb-0 sm:mr-6">
-                  <Image
-                    src={item.productId.image}
-                    alt={item.productId.name}
-                    fill
-                    className="object-contain"
-                    sizes="100px"
-                  />
+                <div className="relative w-full sm:w-32 h-32 mb-4 sm:mb-0 sm:mr-6 bg-gray-100 flex items-center justify-center">
+                  {item.productId.image ? (
+                    <Image
+                      src={item.productId.image}
+                      alt={item.productId.name}
+                      fill
+                      className="object-contain"
+                      sizes="100px"
+                    />
+                  ) : (
+                    <span className="text-gray-400">No image</span>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg mb-2">{item.productId.name}</h3>

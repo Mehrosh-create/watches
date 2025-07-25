@@ -27,7 +27,7 @@ export default function CheckoutPage() {
           <div className="mt-4">
             <a 
               href="/checkout/shipping" 
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg inline-block"
+              className="bg-gray-600 text-white px-6 py-3 rounded-lg inline-block"
             >
               Continue to Shipping
             </a>

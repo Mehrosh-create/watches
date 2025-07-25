@@ -30,7 +30,6 @@ export default function PaymentPage() {
 
     try {
       if (data.paymentMethod === 'card') {
-        // Stripe integration
         const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
         const response = await fetch('/api/checkout/session', {
           method: 'POST',
@@ -48,14 +47,11 @@ export default function PaymentPage() {
         const session = await response.json()
         await stripe?.redirectToCheckout({ sessionId: session.id })
       } else {
-        // Handle PayPal flow
-        // Example: window.location.href = '/api/checkout/paypal'
         alert('PayPal checkout is not yet implemented.')
       }
     } catch (error) {
       console.error('Checkout error:', error)
       setIsProcessing(false)
-      // Optionally display error to user
     }
   }
 
@@ -69,12 +65,14 @@ export default function PaymentPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
           <div className="space-y-4">
             <div className="border rounded-lg p-4">
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="radio"
                   {...register('paymentMethod')}
                   value="card"
-                  className="h-4 w-4"
+                  className="appearance-none h-4 w-4 border border-gray-300 rounded-full 
+                           checked:bg-gray-600 checked:border-black
+                           focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 />
                 <span className="font-medium">Credit/Debit Card</span>
               </label>
@@ -84,7 +82,6 @@ export default function PaymentPage() {
                   <div>
                     <label className="block mb-1">Card Number</label>
                     <div className="border rounded-lg px-4 py-2 bg-gray-50">
-                      {/* Stripe Elements UI goes here */}
                       [Stripe Elements will go here]
                     </div>
                   </div>
@@ -111,12 +108,14 @@ export default function PaymentPage() {
             </div>
 
             <div className="border rounded-lg p-4">
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="radio"
                   {...register('paymentMethod')}
                   value="paypal"
-                  className="h-4 w-4"
+                  className="appearance-none h-4 w-4 border border-gray-300 rounded-full 
+                           checked:bg-gray-600 checked:border-black
+                           focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 />
                 <span className="font-medium">PayPal</span>
               </label>
@@ -126,7 +125,7 @@ export default function PaymentPage() {
           <div className="mt-8 flex justify-between">
             <a
               href="/checkout/shipping"
-              className="text-blue-600 hover:underline"
+              className="text-gray-600 hover:underline"
             >
               Back to Shipping
             </a>
@@ -134,7 +133,7 @@ export default function PaymentPage() {
             <button
               type="submit"
               disabled={isProcessing}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg disabled:bg-gray-400"
+              className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition disabled:bg-gray-400"
             >
               {isProcessing ? 'Processing...' : 'Complete Order'}
             </button>
