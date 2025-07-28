@@ -7,7 +7,7 @@ const newArrivals = [
     id: 1,
     name: 'Avant-Garde Edition',
     price: 799.99,
-    image: '/watches/new-arrival-1.jpg',
+    image: '/Avant.jpg',
     isNew: true,
     rating: 4.9
   },
@@ -15,7 +15,7 @@ const newArrivals = [
     id: 2,
     name: 'Neo Classic',
     price: 649.99,
-    image: '/watches/new-arrival-2.jpg',
+    image: '/Neo.jpg',
     isNew: true,
     rating: 4.7
   },
@@ -23,7 +23,7 @@ const newArrivals = [
     id: 3,
     name: 'Carbon Fiber Pro',
     price: 899.99,
-    image: '/watches/new-arrival-3.jpg',
+    image: '/carbon.jpg',
     isNew: true,
     rating: 5.0
   },
@@ -31,7 +31,7 @@ const newArrivals = [
     id: 4,
     name: 'Solar Chrono',
     price: 549.99,
-    image: '/watches/new-arrival-4.jpg',
+    image: '/Solar.jpg',
     isNew: true,
     rating: 4.5
   }

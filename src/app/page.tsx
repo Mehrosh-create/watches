@@ -7,21 +7,21 @@ export default function Home() {
       id: 1,
       name: 'Luxury Chronograph',
       price: 499.99,
-      image: '/images1.jpg',
+      image: '/luxuryy.jpg',
       rating: 4.8
     },
     {
       id: 2,
       name: 'Classic Leather',
       price: 349.99,
-      image: '/images2.jpg',
+      image: '/leatherrr.jpg',
       rating: 4.6
     },
     {
       id: 3,
       name: 'Sport Pro',
       price: 299.99,
-      image: '/images3.jpg',
+      image: '/sportsss.jpg',
       rating: 4.5
     }
   ]
@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
-      <div className="relative bg-gray-900 text-white rounded-xl overflow-hidden mb-12 h-96">
+      <div className="relative bg-gray-900 text-white rounded-xl overflow-hidden mb-12 h-100">
         <Image 
           src="/watchh.jpg" 
           alt="Premium Watches"
@@ -51,7 +51,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuredProducts.map(product => (
             <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-              <div className="relative h-64">
+              <div className="relative h-95">
                 <Image 
                   src={product.image}
                   alt={product.name}

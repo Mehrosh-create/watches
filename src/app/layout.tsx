@@ -80,7 +80,7 @@ export default function RootLayout({
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
                 <h3 className="font-bold text-lg mb-4">WatchHub</h3>
-                <p className="text-gray-600">Your premium destination for quality timepieces since 2015.</p>
+                <p className="text-gray-600">Your premium destination for quality timepieces since 2025.</p>
               </div>
               <div>
                 <h4 className="font-semibold mb-4">Shop</h4>

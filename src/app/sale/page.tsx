@@ -9,7 +9,7 @@ const saleItems = [
     originalPrice: 349.99,
     salePrice: 249.99,
     discount: '28% OFF',
-    image: '/watches/sale-1.jpg',
+    image: '/classic.jpg',
     timeLeft: '12:45:32',
     stockLeft: 5
   },
@@ -19,7 +19,7 @@ const saleItems = [
     originalPrice: 299.99,
     salePrice: 199.99,
     discount: '33% OFF',
-    image: '/watches/sale-2.jpg',
+    image: '/Minimaliist.jpg',
     timeLeft: '08:22:17',
     stockLeft: 3
   },
@@ -29,7 +29,7 @@ const saleItems = [
     originalPrice: 399.99,
     salePrice: 299.99,
     discount: '25% OFF',
-    image: '/watches/sale-3.jpg',
+    image: '/Sports.jpg',
     timeLeft: '23:15:08',
     stockLeft: 8
   },
@@ -39,7 +39,7 @@ const saleItems = [
     originalPrice: 449.99,
     salePrice: 349.99,
     discount: '22% OFF',
-    image: '/watches/sale-4.jpg',
+    image: '/Vintage.jpg',
     timeLeft: '05:42:51',
     stockLeft: 2
   }

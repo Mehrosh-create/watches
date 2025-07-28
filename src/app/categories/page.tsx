@@ -253,27 +253,21 @@ export default function CategoriesPage() {
             <p className="text-gray-600 mb-4">
               Consider your personal style - whether you prefer classic elegance, modern minimalism, or sporty functionality.
             </p>
-            <Link href="/style-guide" className="text-black hover:underline font-medium">
-              Read our style guide →
-            </Link>
+           
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg mb-3">By Occasion</h3>
             <p className="text-gray-600 mb-4">
               Different occasions call for different watches. We have collections perfect for formal events, daily wear, or outdoor adventures.
             </p>
-            <Link href="/occasions" className="text-black hover:underline font-medium">
-              Browse by occasion →
-            </Link>
+         
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg mb-3">By Feature</h3>
             <p className="text-gray-600 mb-4">
               Need specific features? Explore watches with water resistance, chronographs, smart capabilities, or automatic movements.
             </p>
-            <Link href="/features" className="text-black hover:underline font-medium">
-              Explore features →
-            </Link>
+          
           </div>
         </div>
       </section>
