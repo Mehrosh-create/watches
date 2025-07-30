@@ -1,8 +1,9 @@
+import dbConnect from '@/lib/db'
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import bcrypt from 'bcryptjs'
-import dbConnect from '@/lib/db'
+import User from '@/models/User' // Assuming you have a User model
 
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions)
@@ -14,9 +15,9 @@ export async function PUT(request: Request) {
   const { currentPassword, newPassword } = await request.json()
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    })
+    await dbConnect()
+    
+    const user = await User.findOne({ email: session.user.email })
 
     if (!user || !user.password) {
       return NextResponse.json(
@@ -35,10 +36,10 @@ export async function PUT(request: Request) {
 
     const hashedPassword = await bcrypt.hash(newPassword, 12)
     
-    await prisma.user.update({
-      where: { email: session.user.email },
-      data: { password: hashedPassword },
-    })
+    await User.updateOne(
+      { email: session.user.email },
+      { password: hashedPassword }
+    )
 
     return NextResponse.json({ success: true })
   } catch (error) {

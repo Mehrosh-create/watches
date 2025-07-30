@@ -1,4 +1,4 @@
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaFacebookF, FaTwitter, FaInstagram, FaPinterestP } from 'react-icons/fa'
 
 export default function ContactPage() {
   return (
@@ -130,19 +130,24 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Social Media */}
+          {/* Social Media - Updated with Icons */}
           <div className="pt-4">
             <h3 className="font-semibold mb-3">Follow Us</h3>
             <div className="flex space-x-4">
-              {['Facebook', 'Twitter', 'Instagram', 'Pinterest'].map(social => (
+              {[
+                { icon: <FaFacebookF size={18} />, name: 'Facebook' },
+                { icon: <FaTwitter size={18} />, name: 'Twitter' },
+                { icon: <FaInstagram size={18} />, name: 'Instagram' },
+                { icon: <FaPinterestP size={18} />, name: 'Pinterest' }
+              ].map(social => (
                 <a 
-                  key={social} 
+                  key={social.name} 
                   href="#" 
-                  className="bg-gray-100 p-3 rounded-full hover:bg-gray-200 transition"
-                  aria-label={social}
+                  className="bg-gray-100 p-3 rounded-full hover:bg-gray-200 transition flex items-center justify-center w-12 h-12"
+                  aria-label={social.name}
                 >
-                  <span className="sr-only">{social}</span>
-                  <span className="font-medium">{social.charAt(0)}</span>
+                  <span className="sr-only">{social.name}</span>
+                  {social.icon}
                 </a>
               ))}
             </div>
