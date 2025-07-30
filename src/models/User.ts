@@ -1,18 +1,29 @@
-//models/User.ts
-import mongoose, { Document } from 'mongoose'
+import { Schema, model, Document } from 'mongoose';
+import dbConnect from '@/lib/db';
 
+// 1. Define Interface
 interface IUser extends Document {
-  email: string
-  password: string
-  name: string
-  role: 'user' | 'admin'
+  name: string;
+  email: string;
+  password: string;
+  role: 'user' | 'admin';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const UserSchema = new mongoose.Schema<IUser>({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' }
-}, { timestamps: true })
+// 2. Create Schema
+const userSchema = new Schema<IUser>(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' }
+  },
+  { timestamps: true }
+);
 
-export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
+// 3. Create Model
+const User = model<IUser>('User', userSchema);
+
+// 4. Export Model (with optional connection check)
+export default User;

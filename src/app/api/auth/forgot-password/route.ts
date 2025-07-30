@@ -3,6 +3,7 @@ import User from '@/models/User'
 import dbConnect from '@/lib/db'
 import crypto from 'crypto'
 import { sendPasswordResetEmail } from '@/lib/api/mail'
+import { url } from 'inspector'
 
 export async function POST(request: Request) {
   await dbConnect()

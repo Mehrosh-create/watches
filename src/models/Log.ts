@@ -1,12 +1,19 @@
-// lib/db/models/Log.ts
-import mongoose from 'mongoose'
+// lib/models/Log.ts
+import { Schema, model, Document } from 'mongoose';
 
-const LogSchema = new mongoose.Schema({
-  action: String,
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  ipAddress: String,
-  userAgent: String,
-  timestamp: { type: Date, default: Date.now }
-})
+interface ILog extends Document {
+  action: string;
+  user: Schema.Types.ObjectId;
+  details: object;
+  createdAt: Date;
+}
 
-export const Log = mongoose.models.Log || mongoose.model('Log', LogSchema)
+const logSchema = new Schema<ILog>({
+  action: { type: String, required: true },
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
+  details: { type: Object },
+}, { timestamps: true });
+
+// Proper default export
+const Log = model<ILog>('Log', logSchema);
+export default Log;

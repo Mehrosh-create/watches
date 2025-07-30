@@ -1,4 +1,3 @@
-// components/auth/UserMenu.tsx
 'use client'
 
 import { signOut } from 'next-auth/react'
@@ -14,7 +13,7 @@ export default function UserMenu() {
     return (
       <div className="flex space-x-4">
         <Link 
-          href="/auth/login" 
+          href="/auth/signin"  // Changed from /auth/signin
           className="text-gray-700 hover:text-blue-600"
         >
           Sign In
@@ -68,7 +67,7 @@ export default function UserMenu() {
           )}
           <button
             onClick={() => {
-              signOut()
+              signOut({ callbackUrl: '/auth/signin' })  // Redirect to signin after signout
               setIsOpen(false)
             }}
             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
