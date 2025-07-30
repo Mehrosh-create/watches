@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 import dbConnect from '@/lib/db';
 
 // 1. Define Interface
@@ -22,8 +22,8 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// 3. Create Model
-const User = model<IUser>('User', userSchema);
+// 3. Create Model with check for existing model
+const User = models.User || model<IUser>('User', userSchema);
 
-// 4. Export Model (with optional connection check)
+// 4. Export Model
 export default User;

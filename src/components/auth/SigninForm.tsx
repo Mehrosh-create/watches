@@ -12,26 +12,37 @@ export default function SigninForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password
-    })
+  // Update the handleSubmit function in SigninForm.tsx
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setLoading(true)
+  
+  const result = await signIn('credentials', {
+    redirect: false,
+    email,
+    password
+  })
 
-    if (result?.error) {
-      toast.error(result.error || 'Sign in failed. Please try again.')
-    } else {
-      toast.success('Signed in successfully!')
-      router.push('/account')
-      router.refresh()
-    }
+  if (result?.error) {
+    toast.error(result.error || 'Sign in failed. Please try again.')
+  } else {
+    toast.success('Signed in successfully!')
     
-    setLoading(false)
+    // Fetch the session to get user role
+    const response = await fetch('/api/auth/session')
+    const session = await response.json()
+    
+    // Redirect based on role
+    if (session?.user?.role === 'admin') {
+      router.push('/admin/dashboard')
+    } else {
+      router.push('/shop')
+    }
+    router.refresh()
   }
+  
+  setLoading(false)
+}
 
   return (
     <div className="space-y-6">
