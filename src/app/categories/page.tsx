@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { FiClock, FiStar, FiShoppingBag } from 'react-icons/fi'
+import Marquee from "react-fast-marquee";
 
 const categories = [
   {
@@ -15,7 +16,6 @@ const categories = [
     id: 2,
     name: 'Sports Watches',
     image: '/watch2.jpg',
-    count: 35,
     description: 'Durable watches for active lifestyles',
     popular: true
   },
@@ -23,35 +23,30 @@ const categories = [
     id: 3,
     name: 'Smart Watches',
     image: '/watch3.jpg',
-    count: 28,
     description: 'Connected watches with advanced features'
   },
   {
     id: 4,
     name: 'Classic Watches',
-    image: '/watch4.jpg',
-    count: 56,
+    image: '/classic.jpg',
     description: 'Timeless designs for every occasion'
   },
   {
     id: 5,
     name: 'Diving Watches',
     image: '/watch5.jpg',
-    count: 19,
     description: 'Water-resistant professional timepieces'
   },
   {
     id: 6,
     name: 'Pilot Watches',
     image: '/watch6.jpg',
-    count: 23,
     description: 'Aviation-inspired chronographs'
   },
   {
     id: 7,
     name: 'Limited Editions',
     image: '/watch7.jpg',
-    count: 12,
     description: 'Exclusive collector\'s items',
     new: true
   },
@@ -59,11 +54,9 @@ const categories = [
     id: 8,
     name: 'Vintage Watches',
     image: '/watch8.jpg',
-    count: 31,
     description: 'Classic watches with history'
   }
 ]
-
 
 const popular = [
   {
@@ -78,11 +71,11 @@ const popular = [
     id: 2,
     name: 'Sports Watches',
     image: '/sport.jpg',
-    count: 31,
+    count: 16,
     description: 'Durable watches for active lifestyles'
   }
-
 ]
+
 const brands = [
   { name: 'Rolex', logo: '/brands/rolex.png' },
   { name: 'Omega', logo: '/brands/omega.png' },
@@ -95,96 +88,102 @@ const brands = [
 export default function CategoriesPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Hero Section - Add background image if you want */}
-      <div className="relative bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-xl overflow-hidden mb-12 h-64">
-        {/* Optional: Add a background image */}
-        <Image
-          src="/casio.jpg" // Add this image to your public folder
-          alt="Luxury watches collection"
-          fill
-          className="object-cover opacity-50"
-          priority
-        />
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Explore Our Collections</h1>
-          <p className="text-xl mb-8 max-w-2xl">
-            Discover the perfect timepiece for every style and occasion
-          </p>
-          <div className="flex gap-4">
-            <Link 
-              href="/shop" 
-              className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition flex items-center"
-            >
-              <FiShoppingBag className="mr-2" /> Shop All
-            </Link>
-            <Link 
-              href="#popular" 
-              className="bg-transparent border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-black transition"
-            >
-              Popular Categories
-            </Link>
-          </div>
-        </div>
-      </div>
-
-   {/* Popular Categories */}
-<section id="popular" className="mb-16">
-  <div className="flex justify-between items-center mb-8">
-    <h2 className="text-2xl font-bold">Popular Categories</h2>
-  </div>
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    {popular.map(popular => (
-      <Link
-        key={popular.id}
-        href={`/shop?popular=${popular.id}`}
-        className="group block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition border border-gray-100"
+      {/* Hero Section with Video Background */}
+     <div className="relative bg-gray-900 text-white rounded-xl overflow-hidden mb-12 h-[600px]">
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    disablePictureInPicture
+    className="absolute inset-0 w-full h-full object-cover opacity-70"
+  >
+    <source 
+      src="https://assets.mixkit.co/videos/preview/mixkit-close-up-of-modern-watch-1904-large.mp4" 
+      type="video/mp4" 
+    />
+    Your browser does not support the video tag.
+  </video>
+  <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
+    <h1 className="text-4xl md:text-5xl font-bold mb-4">Explore Our Collections</h1>
+    <p className="text-xl mb-8 max-w-2xl">
+      Discover the perfect timepiece for every style and occasion
+    </p>
+    <div className="flex gap-4">
+      <Link 
+        href="/shop" 
+        className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition flex items-center"
       >
-        <div className="relative group rounded-xl overflow-hidden h-64 bg-gray-200">
-          <Image
-            src={popular.image}
-            alt={popular.name}
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-opacity-20 group-hover:bg-opacity-30 transition flex flex-col justify-end p-6">
-            <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center">
-              <FiStar className="mr-1" /> Popular
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-1">{popular.name}</h2>
-              <p className="text-white/80 mb-3">{popular.description}</p>
-              <div className="flex justify-between items-center">
-                <span className="text-white/90 text-sm flex items-center">
-                  <FiClock className="mr-1" /> {popular.count} items
-                </span>
-                <div className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-100 transition text-sm font-medium">
-                  View Collection
+        <FiShoppingBag className="mr-2" /> Shop All
+      </Link>
+      <Link 
+        href="#popular" 
+        className="bg-transparent border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-black transition"
+      >
+        Popular Categories
+      </Link>
+    </div>
+  </div>
+</div>
+
+      {/* Popular Categories with Hover Animation */}
+      <section id="popular" className="mb-16">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold">Popular Categories</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {popular.map(popular => (
+            <Link
+              key={popular.id}
+              href={`/shop?popular=${popular.id}`}
+              className="group block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition border border-gray-100 transform hover:-translate-y-1 transition-transform duration-300"
+            >
+              <div className="relative group rounded-xl overflow-hidden h-100 bg-gray-200">
+                <Image
+                  src={popular.image}
+                  alt={popular.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-opacity-20 group-hover:bg-opacity-30 transition flex flex-col justify-end p-6">
+                  <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                    <FiStar className="mr-1" /> Popular
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">{popular.name}</h2>
+                    <p className="text-white/80 mb-3">{popular.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/90 text-sm flex items-center">
+                        <FiClock className="mr-1" /> {popular.count} items
+                      </span>
+                      <div className="bg-white text-black px-4 py-3 rounded-md hover:bg-gray-100 transition text-sm font-medium">
+                        View Collection
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </Link>
+          ))}
         </div>
-      </Link>
-    ))}
-  </div>
-</section>
+      </section>
 
-      {/* All Categories */}
+      {/* All Categories with Hover Animation */}
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-8">All Categories</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {categories.map(category => (
             <Link 
               key={category.id} 
               href={`/shop?category=${category.id}`}
-              className="group block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition border border-gray-100"
+              className="group block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition border border-gray-100 transform hover:-translate-y-1 transition-transform duration-300"
             >
-              <div className="relative h-48 bg-gray-200">
+              <div className="relative h-55 bg-gray-200 overflow-hidden">
                 <Image
                   src={category.image}
                   alt={category.name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 {category.new && (
                   <div className="absolute top-4 right-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -208,23 +207,31 @@ export default function CategoriesPage() {
       {/* Shop by Brand */}
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-8 text-center">Shop by Brand</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-          {brands.map(brand => (
-            <Link 
-              key={brand.name}
-              href={`/shop?brand=${brand.name.toLowerCase()}`}
-              className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center hover:shadow-md transition h-32"
-            >
-              <div className="relative w-full h-full">
-                <Image
-                  src={brand.logo}
-                  alt={brand.name}
-                  fill
-                  className="object-contain p-2"
-                />
-              </div>
-            </Link>
-          ))}
+        <div className="px-4">
+          <Marquee 
+            speed={60}
+            pauseOnHover={true}
+            gradient={true}
+            gradientColor={[248, 250, 252]} // gray-50
+            gradientWidth={100}
+          >
+            {brands.map((brand) => (
+              <Link
+                key={brand.name}
+                href={`/shop?brand=${brand.name.toLowerCase()}`}
+                className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center hover:shadow-md transition h-32 mx-4"
+              >
+                <div className="relative w-32 h-full">
+                  <Image
+                    src={brand.logo}
+                    alt={brand.name}
+                    fill
+                    className="object-contain p-2"
+                  />
+                </div>
+              </Link>
+            ))}
+          </Marquee>
         </div>
       </section>
 
@@ -253,21 +260,18 @@ export default function CategoriesPage() {
             <p className="text-gray-600 mb-4">
               Consider your personal style - whether you prefer classic elegance, modern minimalism, or sporty functionality.
             </p>
-           
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg mb-3">By Occasion</h3>
             <p className="text-gray-600 mb-4">
               Different occasions call for different watches. We have collections perfect for formal events, daily wear, or outdoor adventures.
             </p>
-         
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg mb-3">By Feature</h3>
             <p className="text-gray-600 mb-4">
               Need specific features? Explore watches with water resistance, chronographs, smart capabilities, or automatic movements.
             </p>
-          
           </div>
         </div>
       </section>
