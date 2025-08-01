@@ -32,7 +32,7 @@ const allProducts: Product[] = [
     id: 2,
     name: 'Classic Leather',
     price: 349.99,
-    image: '/images2.jpg',
+    image: '/classicl.jpg',
     rating: 4.6,
     brand: 'Omega',
     dateAdded: '2023-11-20'
@@ -41,7 +41,7 @@ const allProducts: Product[] = [
     id: 3,
     name: 'Sport Pro',
     price: 299.99,
-    image: '/images3.jpg',
+    image: '/sport.jpg',
     rating: 4.5,
     brand: 'Tag Heuer',
     dateAdded: '2023-09-05'
@@ -50,7 +50,7 @@ const allProducts: Product[] = [
     id: 4,
     name: 'Diver Pro',
     price: 599.99,
-    image: '/images4.jpg',
+    image: '/diver.jpg',
     rating: 4.9,
     brand: 'Seiko',
     dateAdded: '2023-12-10'
@@ -59,7 +59,7 @@ const allProducts: Product[] = [
     id: 5,
     name: 'Minimalist',
     price: 249.99,
-    image: '/images5.jpg',
+    image: '/minimalist.jpg',
     rating: 4.3,
     brand: 'Casio',
     dateAdded: '2023-08-22'
@@ -98,21 +98,18 @@ export default function ShopPage() {
   useEffect(() => {
     let results = [...allProducts];
     
-    // Apply search filter
     if (searchQuery) {
       results = results.filter(product => 
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     
-    // Apply brand filters
     if (selectedBrands.length > 0) {
       results = results.filter(product => 
         selectedBrands.includes(product.brand)
       );
     }
     
-    // Apply price range filters
     if (selectedPriceRanges.length > 0) {
       results = results.filter(product => {
         return selectedPriceRanges.some(range => {
@@ -122,7 +119,6 @@ export default function ShopPage() {
       });
     }
     
-    // Apply sorting
     switch (sortOption) {
       case 'price-low':
         results.sort((a, b) => a.price - b.price);
@@ -137,7 +133,6 @@ export default function ShopPage() {
         results.sort((a, b) => b.rating - a.rating);
         break;
       default:
-        // Default sorting (featured)
         results.sort((a, b) => b.rating - a.rating);
     }
     
@@ -245,7 +240,7 @@ export default function ShopPage() {
               <FiFilter className="mr-2" /> Filters
             </h2>
             <button 
-              className="text-sm text-gray-500 hover:text-black"
+              className="text-sm text-gray-500 hover:text-black transition-colors duration-200"
               onClick={resetFilters}
             >
               Reset
@@ -257,10 +252,10 @@ export default function ShopPage() {
             <h3 className="font-medium mb-3">Brand</h3>
             <div className="space-y-2">
               {filters.brands.map(brand => (
-                <label key={brand} className="flex items-center">
+                <label key={brand} className="flex items-center hover:text-black transition-colors duration-200">
                   <input 
                     type="checkbox" 
-                    className="rounded border-gray-300 mr-2" 
+                    className="rounded border-gray-300 mr-2 hover:border-black transition-colors duration-200" 
                     checked={selectedBrands.includes(brand)}
                     onChange={() => handleBrandSelect(brand)}
                   />
@@ -275,10 +270,10 @@ export default function ShopPage() {
             <h3 className="font-medium mb-3">Price Range</h3>
             <div className="space-y-2">
               {filters.priceRanges.map(range => (
-                <label key={range.value} className="flex items-center">
+                <label key={range.value} className="flex items-center hover:text-black transition-colors duration-200">
                   <input 
                     type="checkbox" 
-                    className="rounded border-gray-300 mr-2" 
+                    className="rounded border-gray-300 mr-2 hover:border-black transition-colors duration-200" 
                     checked={selectedPriceRanges.includes(range.value)}
                     onChange={() => handlePriceRangeSelect(range.value)}
                   />
@@ -289,7 +284,7 @@ export default function ShopPage() {
           </div>
 
           <button 
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition-colors duration-300 hover:scale-[1.02] transform"
           >
             Apply Filters
           </button>
@@ -302,7 +297,7 @@ export default function ShopPage() {
               Showing {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
             </p>
             <select 
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black hover:border-gray-400 transition-colors duration-200"
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >
@@ -319,7 +314,7 @@ export default function ShopPage() {
               <h3 className="text-xl font-medium mb-2">No products found</h3>
               <p className="text-gray-500">Try adjusting your filters or search query</p>
               <button 
-                className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+                className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors duration-300 hover:scale-105 transform"
                 onClick={resetFilters}
               >
                 Reset Filters
@@ -329,38 +324,48 @@ export default function ShopPage() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {currentProducts.map(product => (
-                  <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group">
-                    <div className="relative h-64 bg-gray-200">
+                  <div 
+                    key={product.id} 
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group"
+                  >
+                    <div className="relative h-100 bg-gray-200 overflow-hidden">
                       <Image
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-cover"
+                        className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority={false}
                       />
-                      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
-                        <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100">
-                          <FiHeart className="text-gray-700" />
+                      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100 transition-all duration-300 hover:scale-110 transform">
+                          <FiHeart className="text-gray-700 hover:text-red-500 transition-colors duration-300" />
                         </button>
-                        <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100">
-                          <FiShoppingCart className="text-gray-700" />
+                        <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100 transition-all duration-300 hover:scale-110 transform">
+                          <FiShoppingCart className="text-gray-700 hover:text-green-600 transition-colors duration-300" />
                         </button>
                       </div>
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-lg">{product.name}</h3>
+                      <h3 className="font-semibold text-lg group-hover:text-black-600 transition-colors duration-300">{product.name}</h3>
                       <div className="flex items-center mt-1">
                         {[...Array(5)].map((_, i) => (
-                          <svg key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                          <svg 
+                            key={i} 
+                            className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`} 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                           </svg>
                         ))}
                         <span className="text-sm text-gray-500 ml-1">({product.rating})</span>
                       </div>
                       <div className="mt-4 flex justify-between items-center">
-                        <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
-                        <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+                        <span className="font-bold text-lg group-hover:text-black transition-colors duration-300">
+                          ${product.price.toFixed(2)}
+                        </span>
+                        <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-all duration-300 hover:scale-105 transform">
                           Add to Cart
                         </button>
                       </div>
@@ -376,7 +381,7 @@ export default function ShopPage() {
                     <button 
                       onClick={prevPage}
                       disabled={currentPage === 1}
-                      className={`px-3 py-1 rounded border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                      className={`px-3 py-1 rounded border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 transition-colors duration-200'}`}
                     >
                       Previous
                     </button>
@@ -388,7 +393,7 @@ export default function ShopPage() {
                         <button
                           key={number}
                           onClick={() => paginate(number as number)}
-                          className={`px-3 py-1 rounded ${currentPage === number ? 'bg-black text-white' : 'border hover:bg-gray-100'}`}
+                          className={`px-3 py-1 rounded transition-colors duration-200 ${currentPage === number ? 'bg-black text-white' : 'border hover:bg-gray-100'}`}
                         >
                           {number}
                         </button>
@@ -398,7 +403,7 @@ export default function ShopPage() {
                     <button 
                       onClick={nextPage}
                       disabled={currentPage === totalPages}
-                      className={`px-3 py-1 rounded border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                      className={`px-3 py-1 rounded border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 transition-colors duration-200'}`}
                     >
                       Next
                     </button>

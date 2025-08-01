@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
 import CheckoutSteps from '@/components/checkout/CheckoutSteps'
 
+
 // Define ShippingInfo type (or import from your context/types if exported)
 type ShippingInfo = {
   firstName: string

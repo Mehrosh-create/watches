@@ -48,22 +48,29 @@ const saleItems = [
 export default function SalePage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Hero Banner */}
-      <div className="relative bg-gray-600 rounded-xl overflow-hidden mb-12 h-64">
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
-            <span className="text-white font-bold text-lg">FLASH SALE</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">End of Season Sale</h1>
-          <p className="text-lg max-w-2xl text-white/90">
-            Limited time offers on premium watches - Up to 50% off!
-          </p>
-          <div className="flex items-center mt-6 bg-black/30 px-4 py-2 rounded-full">
-            <FiClock className="text-white mr-2" />
-            <span className="text-white font-medium">Ends in 2 days 14:32:15</span>
-          </div>
-        </div>
+  {/* Hero Banner */}
+  <div className="relative bg-gray-600 rounded-xl overflow-hidden mb-12 h-[500px] md:h-[600px]">
+    <Image
+      src="/sale.jpg"
+      alt="About WatchHub"
+      fill
+      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+      priority
+    />
+    <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-center p-8">
+      <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
+        <span className="text-white font-bold text-lg">FLASH SALE</span>
       </div>
+      <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">End of Season Sale</h1>
+      <p className="text-lg max-w-2xl text-white/90">
+        Limited time offers on premium watches - Up to 50% off!
+      </p>
+      <div className="flex items-center mt-6 bg-black/30 px-4 py-2 rounded-full">
+        <FiClock className="text-white mr-2" />
+        <span className="text-white font-medium">Ends in 2 days 14:32:15</span>
+      </div>
+    </div>
+  </div>
 
       {/* Sale Countdown Banner */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 flex items-center">
@@ -76,7 +83,10 @@ export default function SalePage() {
       {/* Sale Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {saleItems.map((item) => (
-          <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group relative">
+          <div 
+            key={item.id} 
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group relative hover:-translate-y-1"
+          >
             {/* Sale Badge */}
             <div className="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold z-10">
               {item.discount}
@@ -89,12 +99,12 @@ export default function SalePage() {
               </div>
             )}
 
-            <div className="relative h-64">
+            <div className="relative h-64 overflow-hidden">
               <Image
                 src={item.image}
                 alt={item.name}
                 fill
-                className="object-cover"
+                className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
             </div>
@@ -155,10 +165,12 @@ export default function SalePage() {
             <Link 
               key={category} 
               href={`/shop?category=${category.toLowerCase()}&sale=true`}
-              className="bg-white p-4 rounded-lg shadow-sm text-center hover:shadow-md transition"
+              className="bg-white p-4 rounded-lg shadow-sm text-center hover:shadow-md transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="bg-gray-100 h-32 rounded-md mb-2 flex items-center justify-center">
-                <span className="text-gray-400">+</span>
+              <div className="bg-gray-100 h-32 rounded-md mb-2 flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full transition-transform duration-300 hover:scale-105">
+                  <span className="text-gray-400">+</span>
+                </div>
               </div>
               <span className="font-medium">{category} Watches on Sale</span>
             </Link>

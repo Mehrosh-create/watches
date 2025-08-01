@@ -28,13 +28,12 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
-      <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-64">
-        {/* Add your hero image here */}
+      <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-160 group">
         <Image
-          src="/team.jpg" // Make sure this exists in your public folder
+          src="/teaaam.jpg"
           alt="About WatchHub"
           fill
-          className="object-cover"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           priority
         />
         <div className="absolute inset-0 bg-gray-800 opacity-90"></div>
@@ -64,12 +63,12 @@ export default function AboutPage() {
               and a companion for life's important moments.
             </p>
           </div>
-          <div className="relative h-80 rounded-xl overflow-hidden bg-gray-200">
+          <div className="relative h-100 rounded-xl overflow-hidden bg-gray-200 group">
             <Image
-              src="/teaam.jpg" // Make sure this exists in your public folder
+              src="/teaam.jpg"
               alt="WatchHub Team"
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </div>
         </div>
@@ -78,9 +77,12 @@ export default function AboutPage() {
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
         {features.map((feature, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg shadow-sm text-center">
+          <div 
+            key={index} 
+            className="bg-white p-6 rounded-lg shadow-sm text-center hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+          >
             <div className="flex justify-center mb-4">{feature.icon}</div>
-            <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-black-600 transition-colors duration-300">{feature.title}</h3>
             <p className="text-gray-600">{feature.description}</p>
           </div>
         ))}
@@ -95,17 +97,20 @@ export default function AboutPage() {
             { name: "Michael Chen", role: "Head of Purchasing", image: "/team1.jpg" },
             { name: "Emma Rodriguez", role: "Customer Experience", image: "/team2.jpg" }
           ].map((member, index) => (
-            <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm">
-              <div className="relative h-94 bg-gray-200">
+            <div 
+              key={index} 
+              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group"
+            >
+              <div className="relative h-100 bg-gray-200">
                 <Image
                   src={member.image}
                   alt={member.name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold">{member.name}</h3>
+                <h3 className="text-xl font-semibold group-hover:text-black-600 transition-colors duration-300">{member.name}</h3>
                 <p className="text-gray-600">{member.role}</p>
               </div>
             </div>

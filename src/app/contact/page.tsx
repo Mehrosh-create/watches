@@ -1,10 +1,18 @@
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaFacebookF, FaTwitter, FaInstagram, FaPinterestP } from 'react-icons/fa'
+import Image from 'next/image'
 
 export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
-      <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-64">
+      <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-150">
+            <Image
+                src="/contact.jpg"
+                alt="About WatchHub"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                priority
+              />
         <div className="absolute inset-0 bg-gray-800 opacity-90"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Contact Us</h1>
@@ -13,7 +21,7 @@ export default function ContactPage() {
           </p>
         </div>
       </div>
-
+  
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
         {/* Contact Form */}
         <div className="bg-white rounded-xl shadow-sm p-8">

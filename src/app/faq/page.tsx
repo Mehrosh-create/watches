@@ -1,5 +1,6 @@
 import { FiHelpCircle, FiShoppingBag, FiTruck, FiCreditCard, FiShield, FiClock } from 'react-icons/fi'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const faqCategories = [
   {
@@ -98,8 +99,15 @@ export default function FAQPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
-      <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-64">
+      <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-120">
         <div className="absolute inset-0 bg-gray-800 opacity-90"></div>
+           <Image
+                                src="/question.jpg"
+                                alt="About WatchHub"
+                                fill
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                priority
+                              />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
           <FiHelpCircle className="text-white text-4xl mb-4" />
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Frequently Asked Questions</h1>

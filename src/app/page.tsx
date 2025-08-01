@@ -38,7 +38,7 @@ export default function Home() {
       id: 3,
       name: 'Sport Pro',
       price: 299.99,
-      image: '/sport.jpg',
+      image: '/sportsss.jpg',
       placeholder: '/sportsss-placeholder.jpg',
       rating: 4.5,
       width: 680,
@@ -80,7 +80,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuredProducts.map((product, index) => (
             <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group">
-              <div className={`relative w-full bg-white flex items-center justify-center p-4 ${index < 2 ? 'h-[22rem]' : 'h-80'}`}>
+              <div className={`relative w-full bg-white flex items-center justify-center p-4 ${index < 3 ? 'h-[22rem]' : 'h-80'}`}>
                 <Image
                   src={product.image}
                   alt={product.name}

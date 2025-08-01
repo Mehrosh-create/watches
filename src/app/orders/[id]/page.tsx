@@ -11,7 +11,7 @@ export default async function UserOrderDetailsPage({
   const session = await getServerSession(authOptions)
   
   if (!session?.user) {
-    redirect('/login')
+    redirect('/signin')
   }
 
   return (
