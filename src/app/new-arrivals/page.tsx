@@ -1,6 +1,9 @@
-import { FiClock, FiHeart, FiShoppingCart } from 'react-icons/fi'
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
+import { useState, useEffect } from 'react';
+import { FiClock, FiHeart, FiShoppingCart } from 'react-icons/fi';
+import Image from 'next/image';
+import Link from 'next/link';
+import Cursor from '@/components/Cursor';
 
 const newArrivals = [
   {
@@ -38,8 +41,39 @@ const newArrivals = [
 ]
 
 export default function NewArrivalsPage() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">New Arrivals</h1>
@@ -114,5 +148,5 @@ export default function NewArrivalsPage() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

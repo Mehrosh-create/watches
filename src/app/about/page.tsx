@@ -1,5 +1,8 @@
-import { FaAward, FaHeadset, FaShippingFast, FaShieldAlt } from 'react-icons/fa'
-import Image from 'next/image'
+'use client'
+import { useState, useEffect } from 'react';
+import { FaAward, FaHeadset, FaShippingFast, FaShieldAlt } from 'react-icons/fa';
+import Image from 'next/image';
+import Cursor from '@/components/Cursor';
 
 const features = [
   {
@@ -25,8 +28,39 @@ const features = [
 ]
 
 export default function AboutPage() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
       {/* Hero Section */}
       <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-160 group">
         <Image
@@ -118,5 +152,5 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

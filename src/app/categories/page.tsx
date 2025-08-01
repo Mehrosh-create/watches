@@ -1,7 +1,10 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { FiClock, FiStar, FiShoppingBag } from 'react-icons/fi'
+'use client'
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { FiClock, FiStar, FiShoppingBag } from 'react-icons/fi';
 import Marquee from "react-fast-marquee";
+import Cursor from '@/components/Cursor';
 
 const categories = [
   {
@@ -56,7 +59,7 @@ const categories = [
     image: '/watch8.jpg',
     description: 'Classic watches with history'
   }
-]
+];
 
 const popular = [
   {
@@ -74,7 +77,7 @@ const popular = [
     count: 16,
     description: 'Durable watches for active lifestyles'
   }
-]
+];
 
 const brands = [
   { name: 'Rolex', logo: '/brands/rolex.png' },
@@ -83,48 +86,79 @@ const brands = [
   { name: 'Seiko', logo: '/brands/seiko.jpg' },
   { name: 'Casio', logo: '/brands/casio.jpg' },
   { name: 'Fossil', logo: '/brands/fossil.jpg' }
-]
+];
 
 export default function CategoriesPage() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
       {/* Hero Section with Video Background */}
-     <div className="relative bg-gray-900 text-white rounded-xl overflow-hidden mb-12 h-[600px]">
-  <video
-    autoPlay
-    loop
-    muted
-    playsInline
-    disablePictureInPicture
-    className="absolute inset-0 w-full h-full object-cover opacity-70"
-  >
-    <source 
-      src="https://videos.pexels.com/video-files/17186323/17186323-uhd_2560_1440_30fps.mp4" 
-      type="video/mp4" 
-    />
-    Your browser does not support the video tag.
-  </video>
-  <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
-    <h1 className="text-4xl md:text-5xl font-bold mb-4">Explore Our Collections</h1>
-    <p className="text-xl mb-8 max-w-2xl">
-      Discover the perfect timepiece for every style and occasion
-    </p>
-    <div className="flex gap-4">
-      <Link 
-        href="/shop" 
-        className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition flex items-center"
-      >
-        <FiShoppingBag className="mr-2" /> Shop All
-      </Link>
-      <Link 
-        href="#popular" 
-        className="bg-transparent border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-black transition"
-      >
-        Popular Categories
-      </Link>
-    </div>
-  </div>
-</div>
+      <div className="relative bg-gray-900 text-white rounded-xl overflow-hidden mb-12 h-[600px]">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          disablePictureInPicture
+          className="absolute inset-0 w-full h-full object-cover opacity-70"
+        >
+          <source 
+            src="https://videos.pexels.com/video-files/17186323/17186323-uhd_2560_1440_30fps.mp4" 
+            type="video/mp4" 
+          />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Explore Our Collections</h1>
+          <p className="text-xl mb-8 max-w-2xl">
+            Discover the perfect timepiece for every style and occasion
+          </p>
+          <div className="flex gap-4">
+            <Link 
+              href="/shop" 
+              className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition flex items-center"
+            >
+              <FiShoppingBag className="mr-2" /> Shop All
+            </Link>
+            <Link 
+              href="#popular" 
+              className="bg-transparent border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-black transition"
+            >
+              Popular Categories
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* Popular Categories with Hover Animation */}
       <section id="popular" className="mb-16">
@@ -276,5 +310,5 @@ export default function CategoriesPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

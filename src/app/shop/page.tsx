@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { FiFilter, FiSearch, FiHeart, FiShoppingCart } from 'react-icons/fi';
 import Image from 'next/image';
+import Cursor from '@/components/Cursor';
 
 interface Product {
   id: number;
@@ -86,6 +87,10 @@ const filters = {
 };
 
 export default function ShopPage() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+  
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -93,6 +98,26 @@ export default function ShopPage() {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
   const productsPerPage = 6;
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
 
   // Apply filters and sorting
   useEffect(() => {
@@ -218,6 +243,13 @@ export default function ShopPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <h1 className="text-3xl font-bold">Shop Watches</h1>
         <div className="relative mt-4 md:mt-0 w-full md:w-64">

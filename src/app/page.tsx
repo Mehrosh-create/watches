@@ -1,18 +1,45 @@
-import Image from 'next/image'
-import Link from 'next/link'
+"use client"
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import Cursor from '../components/Cursor';
 
 interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-  placeholder: string
-  rating: number
-  width: number
-  height: number
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  placeholder: string;
+  rating: number;
+  width: number;
+  height: number;
 }
 
 export default function Home() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   const featuredProducts: Product[] = [
     {
       id: 1,
@@ -34,7 +61,7 @@ export default function Home() {
       width: 680,
       height: 1000
     },
-       {
+    {
       id: 3,
       name: 'Sport Pro',
       price: 299.99,
@@ -44,11 +71,17 @@ export default function Home() {
       width: 680,
       height: 1000
     }
-  
-  ]
+  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
       {/* Hero Section with Video */}
       <div className="relative bg-gray-900 text-white rounded-xl overflow-hidden mb-12 h-[600px]">
         <video
@@ -144,5 +177,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }

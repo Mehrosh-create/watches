@@ -1,6 +1,9 @@
-import { FiClock, FiTag, FiAlertTriangle } from 'react-icons/fi'
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
+import { useState, useEffect } from 'react';
+import { FiClock, FiTag, FiAlertTriangle } from 'react-icons/fi';
+import Image from 'next/image';
+import Link from 'next/link';
+import Cursor from '@/components/Cursor';
 
 const saleItems = [
   {
@@ -43,34 +46,65 @@ const saleItems = [
     timeLeft: '05:42:51',
     stockLeft: 2
   }
-]
+];
 
 export default function SalePage() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
-  {/* Hero Banner */}
-  <div className="relative bg-gray-600 rounded-xl overflow-hidden mb-12 h-[500px] md:h-[600px]">
-    <Image
-      src="/sale.jpg"
-      alt="About WatchHub"
-      fill
-      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-      priority
-    />
-    <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-center p-8">
-      <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
-        <span className="text-white font-bold text-lg">FLASH SALE</span>
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
+      {/* Hero Banner */}
+      <div className="relative bg-gray-600 rounded-xl overflow-hidden mb-12 h-[500px] md:h-[600px]">
+        <Image
+          src="/sale.jpg"
+          alt="About WatchHub"
+          fill
+          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-center p-8">
+          <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
+            <span className="text-white font-bold text-lg">FLASH SALE</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">End of Season Sale</h1>
+          <p className="text-lg max-w-2xl text-white/90">
+            Limited time offers on premium watches - Up to 50% off!
+          </p>
+          <div className="flex items-center mt-6 bg-black/30 px-4 py-2 rounded-full">
+            <FiClock className="text-white mr-2" />
+            <span className="text-white font-medium">Ends in 2 days 14:32:15</span>
+          </div>
+        </div>
       </div>
-      <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">End of Season Sale</h1>
-      <p className="text-lg max-w-2xl text-white/90">
-        Limited time offers on premium watches - Up to 50% off!
-      </p>
-      <div className="flex items-center mt-6 bg-black/30 px-4 py-2 rounded-full">
-        <FiClock className="text-white mr-2" />
-        <span className="text-white font-medium">Ends in 2 days 14:32:15</span>
-      </div>
-    </div>
-  </div>
 
       {/* Sale Countdown Banner */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 flex items-center">
@@ -196,5 +230,5 @@ export default function SalePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

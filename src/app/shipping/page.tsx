@@ -1,19 +1,53 @@
-import { FiTruck, FiClock, FiBox, FiRefreshCw, FiMapPin } from 'react-icons/fi'
-import Link from 'next/link'
-import Image from 'next/image'
+'use client'
+import { useState, useEffect } from 'react';
+import { FiTruck, FiClock, FiBox, FiRefreshCw, FiMapPin } from 'react-icons/fi';
+import Link from 'next/link';
+import Image from 'next/image';
+import Cursor from '@/components/Cursor';
 
 export default function ShippingPage() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Mouse position tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Custom Cursor */}
+      <Cursor 
+        mousePos={mousePos} 
+        isDragging={isDragging} 
+        showCursor={showCursor} 
+      />
+
       {/* Hero Section */}
       <div className="relative bg-gray-100 rounded-xl overflow-hidden mb-12 h-160">
-          <Image
-                        src="/shipping.jpg"
-                        alt="About WatchHub"
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        priority
-                      />
+        <Image
+          src="/shipping.jpg"
+          alt="About WatchHub"
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          priority
+        />
         <div className="absolute inset-0 bg-gray-800 opacity-90"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
           <FiTruck className="text-white text-4xl mb-4" />
@@ -185,5 +219,5 @@ export default function ShippingPage() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

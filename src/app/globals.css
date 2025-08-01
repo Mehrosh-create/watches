@@ -120,3 +120,6 @@
     @apply bg-background text-foreground;
   }
 }
+button, a, [role="button"], input[type="submit"], input[type="button"], .clickable {
+  cursor: pointer;
+}
