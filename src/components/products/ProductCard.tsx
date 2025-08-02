@@ -4,28 +4,36 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import WishlistButton from '@/components/products/WishlistButton'
+import { Product } from '@/types/product'
 
-interface Product {
-  id: string
-  name: string
-  price: number
-  imageUrl: string
-  discount?: number
-  rating?: number
+interface ProductCardProps {
+  product: {
+    id: string
+    name: string
+    price: number
+    imageUrl: string
+    discount?: number
+    rating?: number
+  }
 }
 
-const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { id, name, price, imageUrl, discount, rating } = product
   const discountedPrice = discount ? price - (price * discount) / 100 : price
 
   return (
     <div className="group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-      {/* Wishlist Button - positioned absolutely */}
-      <WishlistButton product={product} />
+      <WishlistButton product={{
+        id,
+        name,
+        price,
+        images: [imageUrl],
+        discount,
+        rating: rating ? { average: rating, count: 0 } : undefined
+      }} />
       
       <Link href={`/products/${id}`} passHref>
         <div className="cursor-pointer">
-          {/* Product Image */}
           <div className="relative aspect-square">
             <Image
               src={imageUrl}
@@ -41,11 +49,9 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             )}
           </div>
 
-          {/* Product Details */}
           <div className="p-4">
             <h3 className="font-medium text-gray-900 mb-1 line-clamp-2">{name}</h3>
             
-            {/* Price */}
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">${discountedPrice.toFixed(2)}</span>
               {discount && (
@@ -53,7 +59,6 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
               )}
             </div>
 
-            {/* Rating (optional) */}
             {rating && (
               <div className="flex items-center mt-2">
                 {[...Array(5)].map((_, i) => (

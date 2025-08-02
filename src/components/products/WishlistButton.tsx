@@ -4,18 +4,11 @@
 import { useWishlist } from '@/context/WishlistContext'
 import { FiHeart } from 'react-icons/fi'
 import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast' // Optional: for notifications
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  image?: string
-  // Add other product fields as needed
-}
+import { toast } from 'react-hot-toast'
+import { Product } from '@/types/product'
 
 interface WishlistButtonProps {
-  product: Product
+  product: Product.Listing // Use the Listing type from your namespace
   className?: string
   iconSize?: 'sm' | 'md' | 'lg'
 }
@@ -25,7 +18,6 @@ const WishlistButton = ({ product, className = '', iconSize = 'md' }: WishlistBu
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Sync with wishlist state
   useEffect(() => {
     setIsWishlisted(isInWishlist(product.id))
     setIsLoading(false)
@@ -37,10 +29,14 @@ const WishlistButton = ({ product, className = '', iconSize = 'md' }: WishlistBu
     
     try {
       const wasWishlisted = isInWishlist(product.id)
-      toggleWishlist(product)
+      toggleWishlist({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0] // Use the first image from the array
+      })
       setIsWishlisted(!wasWishlisted)
       
-      // Optional: Show toast notification
       toast.success(
         wasWishlisted 
           ? `Removed ${product.name} from wishlist` 
@@ -62,7 +58,7 @@ const WishlistButton = ({ product, className = '', iconSize = 'md' }: WishlistBu
     lg: 'text-2xl'
   }
 
-  if (isLoading) return null // or a loading spinner
+  if (isLoading) return null
 
   return (
     <button

@@ -1,10 +1,10 @@
 // components/products/ProductList.tsx
 import React from 'react'
 import ProductCard from './ProductCard'
-import { Product } from '@/types/product' // Product is now a namespace
+import { Product } from '@/types/product'
 
 interface ProductListProps {
-  products: Product.Listing[]  // <--- Use the correct type from your Product namespace
+  products: Product.Listing[]
   title?: string
   showViewAll?: boolean
   viewAllLink?: string
@@ -26,7 +26,6 @@ const ProductList: React.FC<ProductListProps> = ({
 
   return (
     <section className="container mx-auto px-4 py-8">
-      {/* Header with title and optional "View All" button */}
       {(title || showViewAll) && (
         <div className="flex justify-between items-center mb-6">
           {title && <h2 className="text-2xl font-bold text-gray-900">{title}</h2>}
@@ -41,17 +40,18 @@ const ProductList: React.FC<ProductListProps> = ({
         </div>
       )}
 
-      {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            id={product.id}
-            name={product.name}
-            price={product.price}
-            discount={product.discount}
-            imageUrl={product.images[0]}
-  rating={product.rating?.average} 
+            product={{
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              imageUrl: product.images[0],
+              discount: product.discount,
+              rating: product.rating?.average
+            }}
           />
         ))}
       </div>

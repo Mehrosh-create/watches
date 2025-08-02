@@ -6,20 +6,12 @@ import { Button } from '@/components/ui/Buttonn'
 import { useCart } from '@/context/CartContext'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
+import { Product } from '@/types/product'
 
-type Product = {
-  id: string
-  name: string
-  price: number
-  stock: number
-  image: string
-}
-
- 
-export default function AddToCart({ product }: { product: Product }) {
+export default function AddToCart({ product }: { product: Product.Base }) {
   const [quantity, setQuantity] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
-  const { addToCart } = useCart() // From your CartContext
+  const { addToCart } = useCart()
 
   const handleAddToCart = async () => {
     setIsLoading(true)
@@ -29,7 +21,7 @@ export default function AddToCart({ product }: { product: Product }) {
         quantity,
         name: product.name,
         price: product.price,
-        image: product.image
+        image: product.images[0]
       })
       toast.success(`${product.name} added to cart!`, {
         position: 'top-center',
