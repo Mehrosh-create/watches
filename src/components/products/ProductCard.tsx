@@ -1,29 +1,28 @@
 // components/products/ProductCard.tsx
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+'use client'
 
-interface ProductCardProps {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string;
-  discount?: number;
-  rating?: number;
+import Image from 'next/image'
+import Link from 'next/link'
+import WishlistButton from '@/components/products/WishlistButton'
+
+interface Product {
+  id: string
+  name: string
+  price: number
+  imageUrl: string
+  discount?: number
+  rating?: number
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({
-  id,
-  name,
-  price,
-  imageUrl,
-  discount,
-  rating,
-}) => {
-  const discountedPrice = discount ? price - (price * discount) / 100 : price;
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+  const { id, name, price, imageUrl, discount, rating } = product
+  const discountedPrice = discount ? price - (price * discount) / 100 : price
 
   return (
-    <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      {/* Wishlist Button - positioned absolutely */}
+      <WishlistButton product={product} />
+      
       <Link href={`/products/${id}`} passHref>
         <div className="cursor-pointer">
           {/* Product Image */}
@@ -36,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             {discount && (
-              <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                 -{discount}%
               </span>
             )}
@@ -74,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </Link>
     </div>
-  );
-};
+  )
+}
 
-export default ProductCard;
+export default ProductCard
