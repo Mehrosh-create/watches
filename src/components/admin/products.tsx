@@ -41,7 +41,7 @@ const handleUpdate = async () => {
     const formData = new FormData();
     formData.append("image", selectedImage);
 
-    const response = await fetch(`http://localhost:3000/api/image/${params.id}`, {
+    const response = await fetch(`http://localhost:3001/api/image/${params.id}`, {
       method: "POST",
       body: formData,
     });

@@ -1,75 +1,59 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { toast } from 'react-hot-toast'
 
 interface Product {
   _id: string
-  productName: string
+  name: string
   price: number
+  stock: number
   description: string
-  stockQuantity: number
-  image_url: string
-  public_id: string
-  createdAt?: string
-  updatedAt?: string
+  category: string
+  isActive: boolean
+  images: string[]
 }
 
-export default function AdminProductsPage() {
-  const [products, setProducts] = useState<Product[]>([])
+export default function ProductDetailPage({ params }: { params: { id: string } }) {
+  const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProduct = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/products')
+        const response = await fetch(`/api/admin/products/${params.id}`, {
+          credentials: 'include'
+        })
 
         if (!response.ok) {
-          throw new Error('Failed to fetch products')
+          if (response.status === 401) {
+            router.push('/admin/products/add')
+            return
+          }
+          if (response.status === 404) {
+            setError('Product not found')
+            return
+          }
+          throw new Error('Failed to fetch product')
         }
 
-        const data = await response.json()
-        setProducts(data)
+        const { data } = await response.json()
+        setProduct(data)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred')
-        toast.error('Failed to load products')
+        toast.error('Failed to load product')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchProducts()
-  }, [])
-
-  const handleDelete = async (productId: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      try {
-        const response = await fetch(`/api/products/${productId}`, {
-          method: 'DELETE'
-        })
-        
-        if (response.ok) {
-          // Remove the deleted product from state
-          setProducts(prev => prev.filter(p => p._id !== productId))
-          toast.success('Product deleted successfully')
-        } else {
-          throw new Error('Failed to delete product')
-        }
-      } catch (err) {
-        toast.error('Failed to delete product')
-      }
-    }
-  }
-
-  const handleEdit = (productId: string) => {
-    // Navigate to edit page with product ID
-    router.push(`/admin/products/edit/${productId}`)
-  }
+    fetchProduct()
+  }, [params.id, router])
 
   if (loading) {
     return (
@@ -87,100 +71,75 @@ export default function AdminProductsPage() {
     )
   }
 
+  if (!product) {
+    return <div>Product not found</div>
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Product Management</h1>
-        <Link
-          href="/admin/products/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-        >
-          Add New Product
-        </Link>
+        <h1 className="text-2xl font-bold">Product Details</h1>
+        <div className="space-x-2">
+          <Link
+            href={`/admin/products/${product._id}/edit`}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
+          >
+            Edit Product
+          </Link>
+          <Link
+            href="/admin/products"
+            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors"
+          >
+            Back to Products
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Product
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {products.length > 0 ? (
-                products.map((product) => (
-                  <tr key={product._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <img
-                            className="h-10 w-10 rounded-full object-cover"
-                            src={product.image_url}
-                            alt={product.productName}
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {product.productName}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ${product.price.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {product.stockQuantity}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                      {product.description}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                      <button
-                        onClick={() => router.push(`/admin/products/${product._id}`)}
-                        className="text-gray-600 hover:text-gray-900"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => handleEdit(product._id)}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                    No products found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="p-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            {product.images.length > 0 && (
+              <div className="w-full md:w-1/3">
+                <div className="bg-gray-100 rounded-lg overflow-hidden">
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              </div>
+            )}
+            
+            <div className="w-full md:w-2/3 space-y-4">
+              <div>
+                <h2 className="text-xl font-semibold">{product.name}</h2>
+                <p className="text-gray-500">{product.category}</p>
+              </div>
+
+              <div className="flex items-center">
+                <span className={`px-2 py-1 text-xs font-semibold rounded-full 
+                  ${product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {product.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Price</p>
+                  <p className="text-lg font-semibold">${product.price.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Stock</p>
+                  <p className="text-lg font-semibold">{product.stock}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">Description</p>
+                <p className="text-gray-700">{product.description || 'No description provided'}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

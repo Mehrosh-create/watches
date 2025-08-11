@@ -5,23 +5,21 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 
+// Assuming you have these types defined in your types/product.ts
 interface Product {
   _id: string
-  productName: string
+  name: string
   price: number
-  description: string
-  stockQuantity: number
-  image_url: string
-  public_id: string
-  createdAt?: string
-  updatedAt?: string
+  stock: number
+  isActive: boolean
+  category?: string
+  images?: string[]
 }
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -29,55 +27,38 @@ export default function AdminProductsPage() {
       try {
         setLoading(true)
         const response = await fetch('/api/products', {
-          next: { revalidate: 0 } // Disable cache
+          credentials: 'include' // Needed for session cookies
         })
 
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || 'Failed to fetch products')
+          if (response.status === 401) {
+            router.push('/admin/products')
+            return
+          }
+          throw new Error('Failed to fetch products')
         }
 
         const data = await response.json()
-        // Handle both direct array and { data: array } responses
-        setProducts(Array.isArray(data) ? data : data.data || [])
+        setProducts(data) // Adjust based on your actual API response structure
       } catch (err) {
-        console.error('Fetch error:', err)
         setError(err instanceof Error ? err.message : 'An unknown error occurred')
-        toast.error('Failed to load products. Check console for details.')
+        toast.error('Failed to load products')
       } finally {
         setLoading(false)
       }
     }
 
     fetchProducts()
-  }, [])
+  }, [router])
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return
-    
-    try {
-      setDeletingId(productId)
-      const response = await fetch(`/api/products/${productId}`, {
-        method: 'DELETE'
-      })
-      
-      if (!response.ok) {
-        throw new Error(await response.text())
-      }
-
-      setProducts(prev => prev.filter(p => p._id !== productId))
-      toast.success('Product deleted successfully')
-    } catch (err) {
-      console.error('Delete error:', err)
-      toast.error(err instanceof Error ? err.message : 'Failed to delete product')
-    } finally {
-      setDeletingId(null)
-    }
+  const handleDeleteSuccess = (deletedId: string) => {
+    setProducts(prev => prev.filter(p => p._id !== deletedId))
+    toast.success('Product deleted successfully')
   }
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[50vh]">
+      <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     )
@@ -85,17 +66,8 @@ export default function AdminProductsPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-          <p className="font-bold">Error Loading Products</p>
-          <p>{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="mt-2 text-blue-600 hover:text-blue-800"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        {error}
       </div>
     )
   }
@@ -112,60 +84,119 @@ export default function AdminProductsPage() {
         </Link>
       </div>
 
-      {products.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <p className="text-gray-500 mb-4">No products found</p>
-          <Link
-            href="/admin/products/new"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors inline-block"
-          >
-            Create Your First Product
-          </Link>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              {/* Table Headers... (same as before) */}
-              <tbody className="bg-white divide-y divide-gray-200">
-                {products.map((product) => (
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Price
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Stock
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {products.length > 0 ? (
+                products.map((product) => (
                   <tr key={product._id}>
-                    {/* Table Cells... (same as before) */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {product.images?.[0] && (
+                          <div className="flex-shrink-0 h-10 w-10">
+                            <img
+                              className="h-10 w-10 rounded-full object-cover"
+                              src={product.images[0]}
+                              alt={product.name}
+                            />
+                          </div>
+                        )}
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {product.name}
+                          </div>
+                          {product.category && (
+                            <div className="text-sm text-gray-500">
+                              {product.category}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      ${product.price.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {product.stock}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                          ${product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                      >
+                        {product.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                       <button
                         onClick={() => router.push(`/admin/products/${product._id}`)}
-                        className="text-blue-600 hover:text-blue-900"
-                        disabled={!!deletingId}
+                        className="text-gray-600 hover:text-gray-900"
                       >
                         View
                       </button>
                       <button
                         onClick={() => router.push(`/admin/products/${product._id}/edit`)}
                         className="text-indigo-600 hover:text-indigo-900"
-                        disabled={!!deletingId}
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(product._id)}
+                        onClick={async () => {
+                          if (confirm('Are you sure you want to delete this product?')) {
+                            try {
+                              const response = await fetch(`/api/products/${product._id}`, {
+                                method: 'DELETE',
+                                credentials: 'include'
+                              })
+                              
+                              if (response.ok) {
+                                handleDeleteSuccess(product._id)
+                              } else {
+                                throw new Error('Failed to delete product')
+                              }
+                            } catch (err) {
+                              toast.error('Failed to delete product')
+                            }
+                          }
+                        }}
                         className="text-red-600 hover:text-red-900"
-                        disabled={deletingId === product._id}
                       >
-                        {deletingId === product._id ? (
-                          <span className="flex items-center">
-                            <span className="animate-spin mr-1">↻</span>
-                            Deleting...
-                          </span>
-                        ) : 'Delete'}
+                        Delete
                       </button>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                    No products found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   )
 }
