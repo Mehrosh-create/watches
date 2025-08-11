@@ -1,11 +1,23 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
+
+const connection: { isConnected?: number } = {};
 
 export const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGO_URI as string);
-        console.log("MongoDB Connected: ", conn.connection.host)
-    } catch (error) {
-        console.log("Error while connecting: ", error);
-        process.exit(1);
-    }
-}
+  if (connection.isConnected) {
+    console.log('Using existing connection');
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI!, {
+      serverSelectionTimeoutMS: 5000, // 5s timeout
+      socketTimeoutMS: 45000, // 45s socket timeout
+    });
+
+    connection.isConnected = db.connections[0].readyState;
+    console.log('MongoDB Connected');
+  } catch (error) {
+    console.error('DB Connection Error:', error);
+    throw error;
+  }
+};
