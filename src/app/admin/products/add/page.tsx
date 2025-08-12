@@ -14,7 +14,7 @@ export default function AddProductPage() {
     setError(null)
 
     try {
-      const response = await fetch("/api/admin/products", {
+      const response = await fetch("/api/products", {
         method: "POST",
         body: formData,
       })

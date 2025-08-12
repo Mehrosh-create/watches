@@ -37,7 +37,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     const fetchProduct = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/admin/products/${params.id}`, {
+        const response = await fetch(`/api/products/${params.id}`, {
           credentials: 'include'
         })
 
@@ -103,7 +103,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     setSubmitting(true)
 
     try {
-      const response = await fetch(`/api/admin/products/${params.id}`, {
+      const response = await fetch(`/api/products/${params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

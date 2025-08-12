@@ -1,8 +1,22 @@
 import { connectDB } from "@/app/api/db/connectDB";
 import { Product } from "@/app/api/image.model";
 import { UploadImage } from "@/app/lib/upload-image";
+import db from "@/lib/db";
 import { NextResponse } from "next/server";
 
+export async function GET() {
+  try {
+    await db
+    const products = await Product.find({})
+    return NextResponse.json(products)
+  } catch  {
+    return NextResponse.json(
+      { error: 'Failed to fetch products' },
+      { status: 500 }
+    )
+  }
+  
+}
 export async function POST(request: Request) {
   await connectDB();
 
@@ -49,3 +63,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+

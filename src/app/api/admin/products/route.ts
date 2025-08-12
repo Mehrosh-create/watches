@@ -1,4 +1,4 @@
-//app/api/admin/products/route.ts
+//app/api/products/route.ts
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"

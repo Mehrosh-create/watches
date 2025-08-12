@@ -25,7 +25,7 @@ export default function ProductReviewsPage({ params }: { params: { id: string } 
     const fetchReviews = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/admin/products/${params.id}/reviews`, {
+        const response = await fetch(`/api/products/${params.id}/reviews`, {
           credentials: 'include'
         })
 
@@ -53,7 +53,7 @@ export default function ProductReviewsPage({ params }: { params: { id: string } 
   const handleDeleteReview = async (reviewId: string) => {
     if (confirm('Are you sure you want to delete this review?')) {
       try {
-        const response = await fetch(`/api/admin/products/${params.id}/reviews/${reviewId}`, {
+        const response = await fetch(`/api/products/${params.id}/reviews/${reviewId}`, {
           method: 'DELETE',
           credentials: 'include'
         })
