@@ -26,13 +26,13 @@ export default function AdminProductsPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/admin/products', {
+        const response = await fetch('/api/products', {
           credentials: 'include' // Needed for session cookies
         })
 
         if (!response.ok) {
           if (response.status === 401) {
-            router.push('/signin')
+            router.push('/admin/products')
             return
           }
           throw new Error('Failed to fetch products')
@@ -164,7 +164,7 @@ export default function AdminProductsPage() {
                         onClick={async () => {
                           if (confirm('Are you sure you want to delete this product?')) {
                             try {
-                              const response = await fetch(`/api/admin/products/${product._id}`, {
+                              const response = await fetch(`/api/products/${product._id}`, {
                                 method: 'DELETE',
                                 credentials: 'include'
                               })

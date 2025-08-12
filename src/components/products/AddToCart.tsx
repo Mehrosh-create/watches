@@ -1,8 +1,8 @@
-// components/products/AddToCart.tsx
+// src/components/products/AddToCart.tsx
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/Buttonn'
+import { Button } from '@/components/ui/Button'
 import { useCart } from '@/context/CartContext'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -16,12 +16,12 @@ export default function AddToCart({ product }: { product: Product.Base }) {
   const handleAddToCart = async () => {
     setIsLoading(true)
     try {
-      await addToCart({
+      addToCart({
         productId: product.id,
-        quantity,
         name: product.name,
         price: product.price,
-        image: product.images[0]
+        image: product.images[0],
+        quantity
       })
       toast.success(`${product.name} added to cart!`, {
         position: 'top-center',
@@ -30,8 +30,9 @@ export default function AddToCart({ product }: { product: Product.Base }) {
           onClick: () => (window.location.href = '/cart')
         }
       })
-    } catch  {
+    } catch (error) {
       toast.error('Failed to add item to cart')
+      console.error(error)
     } finally {
       setIsLoading(false)
     }

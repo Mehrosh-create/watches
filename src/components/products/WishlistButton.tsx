@@ -1,4 +1,4 @@
-// components/products/WishlistButton.tsx
+// src/components/products/WishlistButton.tsx
 'use client'
 
 import { useWishlist } from '@/context/WishlistContext'
@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast'
 import { Product } from '@/types/product'
 
 interface WishlistButtonProps {
-  product: Product.Listing // Use the Listing type from your namespace
+  product: Product.Listing
   className?: string
   iconSize?: 'sm' | 'md' | 'lg'
 }
@@ -27,29 +27,25 @@ const WishlistButton = ({ product, className = '', iconSize = 'md' }: WishlistBu
     e.preventDefault()
     e.stopPropagation()
     
-    try {
-      const wasWishlisted = isInWishlist(product.id)
-      toggleWishlist({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images[0] // Use the first image from the array
-      })
-      setIsWishlisted(!wasWishlisted)
-      
-      toast.success(
-        wasWishlisted 
-          ? `Removed ${product.name} from wishlist` 
-          : `Added ${product.name} to wishlist`,
-        {
-          position: 'bottom-center',
-          icon: wasWishlisted ? '❌' : '❤️',
-        }
-      )
-    } catch (error) {
-      console.error('Error toggling wishlist:', error)
-      toast.error('Failed to update wishlist')
+    const productData = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0]
     }
+
+    toggleWishlist(productData)
+    setIsWishlisted(!isWishlisted)
+    
+    toast.success(
+      isWishlisted 
+        ? `Removed ${product.name} from wishlist` 
+        : `Added ${product.name} to wishlist`,
+      {
+        position: 'bottom-center',
+        icon: isWishlisted ? '❌' : '❤️',
+      }
+    )
   }
 
   const sizeClasses = {

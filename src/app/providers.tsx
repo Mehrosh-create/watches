@@ -1,14 +1,18 @@
-'use client';
+// src/providers.tsx
+'use client'
 
-import { SessionProvider } from "next-auth/react";
-import { CartProvider } from "@/context/CartContext"; // if you use one
+import { SessionProvider } from "next-auth/react"
+import { CartProvider } from "@/context/CartContext"
+import { WishlistProvider } from "@/context/WishlistContext"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <CartProvider>
-        {children}
+        <WishlistProvider>
+          {children}
+        </WishlistProvider>
       </CartProvider>
     </SessionProvider>
-  );
+  )
 }
